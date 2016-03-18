@@ -1,0 +1,43 @@
+ {%extends "base.html"%}
+{%block content%}
+
+<!-- <form action="noc" method="post" align ='left'>
+    {% csrf_token %}
+   {{form}}
+    <input type="submit" value="Send"  />
+
+</form>  -->
+<div style="float:top;width:100%">
+<form action = "{%url 'nocindex' %}" method = "post"> 
+	{%csrf_token%}
+	
+	
+ 	<!-- {{form}}<br><br><br> -->
+	 
+
+	<table align="center">
+	<tr><td><b>Oncall:</b><br><br></td><td><b>Escalated:</b><br><br></td></tr>
+ 	{%for item in listOfDepartments%}
+ 	<tr>
+ 	 	<td alien = "center"><label><input type="checkbox" name="depart" value={{item.name}}>{{item.name}} <br><br></label></td>
+ 	  	<td alien = "right"><label><input type="checkbox" name="escalate" value={{item.name}}>{{item.name}} <br><br></label></td>
+ 	</tr>
+ 	{%endfor%}
+	</table>
+	<br><br>
+	 
+	<label align = "center"> 
+	Ticket #:
+ 	{{form.Ticket}}
+ 	<input  type="submit" value="Send"  />
+ 	</label>
+</form>
+</div>
+<br><br>
+<div style="float:bottom;width:100%">
+<pre>
+		 {%for i in log%}
+		 {{i}}{%endfor%}
+</pre>
+</div>
+{%endblock%} 

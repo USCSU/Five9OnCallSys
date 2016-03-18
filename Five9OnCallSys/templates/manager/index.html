@@ -1,0 +1,37 @@
+ {%extends "base.html"%}
+
+{%block content%}
+
+<!-- <form action="noc" method="post" align ='left'>
+    {% csrf_token %}
+   {{form}}
+    <input type="submit" value="Send"  />
+
+</form>  -->
+
+ <form action = "{%url 'managerindex' team %}" method = "post"> 
+	{%csrf_token%}
+	<div style="float:left;width:25%">
+ 	 <p><label for= "employee">Employee: <br></label></p>
+ 	 {%for item in emp%}
+ 	  <input type="checkbox" name="employee" value={{item.employeeid}}>{{item}}<br> 
+ 	  {%endfor%}
+ 	 <p><label for= "startdate">StartDate: </label></p> 
+ 	 <input type = "text" name = "startdate" id = "startdate"/></p><br>
+ 	 <p><label for= "enddate">EndDate: </label></p>
+ 	 <input type = "text" name = "enddate" id = "enddate"/></p><br><br><br><br>
+
+ 	 <input type="submit" value="Set Schedule"  />
+ 	</div>
+
+ 	<div style="float:right;width:75%">
+	<pre>
+		{%for i in log%}
+		{{i}}{%endfor%}
+	</pre>
+	</div>
+ 	
+</form>
+
+
+{%endblock%} 
