@@ -3,9 +3,16 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from .forms import LoginForm
+from django.contrib.auth.decorators import login_required
+
+def isAuth(request,group):
+    print group
+    return request.user.groups.filter(name= group).exists();
+
 def index(request):
 	 return render(request,'registration/index.html')
 
+@login_required(redirect_field_name='homepage')
 def manager(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -26,6 +33,7 @@ def manager(request):
          
     return render(request,'registration/managerlogin.html',{'form':form})
 
+@login_required(redirect_field_name='homepage')
 def noc(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)

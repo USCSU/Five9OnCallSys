@@ -6,13 +6,14 @@ from manager.models import onDuty
 from dateutil import parser
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
-# def ValuesQuerySetToDict(vqs):
-#     return [item for item in vqs]
-# # Create your tests here.
-@method_decorator(login_required)
+from django.http import HttpResponse,HttpResponseRedirect
+from login.views import isAuth
+ 
+
 def index(request,name):
-	
+	if not isAuth(request,'managerops'):
+		return HttpResponseRedirect('/manager/login/')
+
 	if request.method == 'POST':
 	#take request from html page
 		start= request.POST.get('startdate')
@@ -51,7 +52,12 @@ def index(request,name):
 		if not logs:
 			logs.append("No schedule for your team yet")
 		return render(request,'manager/index.html',{'emp':emp,'team':name,'log':logs})
+
+@login_required(redirect_field_name='homepage')
 def home(request):
+	if not isAuth(request,'managerops'):
+		return HttpResponseRedirect('/manager/login/')
+
 	items = department.objects.all()
 	return render(request,'manager/home.html',{
 		 'items':items,

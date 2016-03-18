@@ -1,18 +1,16 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.http import HttpResponseRedirect
-from manager.models import department
-from manager.models import employee
+from django.http import HttpResponse,HttpResponseRedirect
+from manager.models import department,employee,onDuty
 from noc.forms import NocOpsForm
 from noc.models import log
-from manager.models import onDuty
 from datetime import datetime
 from sets import Set
 import smtplib
-
-
+from django.contrib.auth.decorators import login_required
+from login.views import isAuth
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
+
 def send_email(user, pwd, recipient, subject, body):
     import smtplib
 
@@ -78,7 +76,9 @@ Index page of noc module
 '''
 
 def index(request):
-
+	if not isAuth(request,'nocops'):
+		return HttpResponseRedirect('/noc/login/')
+	
 	if request.method == 'POST':	 
 		form = NocOpsForm(request.POST)
 		escalate = [str(x) for x in request.POST.getlist('escalate')]
