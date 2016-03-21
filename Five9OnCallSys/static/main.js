@@ -11,3 +11,12 @@ window.onload = function () {
         items[i].addEventListener('mouseout', on_mouse_out);
     }
 };
+$(function() {
+    $( "#startdate" ).datepicker();
+});
+$(function() {
+    $( "#enddate" ).datepicker();
+});
+$(function() {
+    $( "#test" ).datepicker();
+});

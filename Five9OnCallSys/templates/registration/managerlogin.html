@@ -8,7 +8,7 @@
 
 <form method="post" action="{% url 'managerlogin' %}">
 {% csrf_token %}
-<label align = "center"><p>Manager login:</p> </label>
+<label align ="center" ><p>Manager login:</p> </label>
 <table align="center">
 <tr>
     <td>{{ form.username.label_tag }}</td>

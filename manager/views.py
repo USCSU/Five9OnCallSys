@@ -8,6 +8,7 @@ from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse,HttpResponseRedirect
 from login.views import isAuth
+from .forms import managerOpsForm
  
 
 def index(request,name):
@@ -51,9 +52,10 @@ def index(request,name):
 			logs.append(content)
 		if not logs:
 			logs.append("No schedule for your team yet")
+		 
 		return render(request,'manager/index.html',{'emp':emp,'team':name,'log':logs})
 
-@login_required(redirect_field_name='homepage')
+ 
 def home(request):
 	if not isAuth(request,'managerops'):
 		return HttpResponseRedirect('/manager/login/')

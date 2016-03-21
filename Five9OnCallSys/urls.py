@@ -17,6 +17,6 @@ urlpatterns = [
 	
 	url(r'^noc/$', noc.index,name ='nocindex'),
     
-    
+    url(r'test/$',login.test,name='test'),
     url(r'^admin/', include(admin.site.urls)), #defual one: means any admin/ will be redirected into admin url rule.
 ]

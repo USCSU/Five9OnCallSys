@@ -12,7 +12,7 @@ def isAuth(request,group):
 def index(request):
 	 return render(request,'registration/index.html')
 
-@login_required(redirect_field_name='homepage')
+ 
 def manager(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -33,7 +33,7 @@ def manager(request):
          
     return render(request,'registration/managerlogin.html',{'form':form})
 
-@login_required(redirect_field_name='homepage')
+
 def noc(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -53,3 +53,5 @@ def noc(request):
         form = LoginForm()
          
     return render(request,'registration/noclogin.html',{'form':form})
+def test(request):
+    return render(request,'registration/test.html')

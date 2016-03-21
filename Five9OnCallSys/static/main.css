@@ -22,11 +22,11 @@ a {
 
 table {
     border-collapse: collapse;
-    align:center;
+    align:left;
 }
 
 table, td, th {
-    border: 0px solid black;
+    
 }
 code { 
     background: hsl(220, 80%, 90%); 
@@ -40,4 +40,14 @@ label {
     display: block;
     padding-left: 15px;
     text-indent: -15px;
+}
+/*div {
+    padding-left: 3cm;
+    padding-top: 2cm;
+}*/
+div{
+    padding-left: 3cm;
+    padding-top: 2cm;
+    
+    margin-top: -8px;
 }

@@ -7,15 +7,15 @@
     <input type="submit" value="Send"  />
 
 </form>  -->
-<div style="float:top;width:100%">
+ 
 <form action = "{%url 'nocindex' %}" method = "post"> 
 	{%csrf_token%}
 	
 	
  	<!-- {{form}}<br><br><br> -->
 	 
-
-	<table align="center">
+ 
+	<table align="center"><br><br><br><br><br>
 	<tr><td><b>Oncall:</b><br><br></td><td><b>Escalated:</b><br><br></td></tr>
  	{%for item in listOfDepartments%}
  	<tr>
@@ -24,16 +24,18 @@
  	</tr>
  	{%endfor%}
 	</table>
-	<br><br>
 	 
-	<label align = "center"> 
+	<div align="center">
+	<label align = "right"> 
 	Ticket #:
  	{{form.Ticket}}
  	<input  type="submit" value="Send"  />
+ 	</div>
  	</label>
+ 	 
 </form>
-</div>
-<br><br>
+ 
+ 
 <div style="float:bottom;width:100%">
 <pre>
 		 {%for i in log%}

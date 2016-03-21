@@ -12,8 +12,6 @@ from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 
 def send_email(user, pwd, recipient, subject, body):
-    import smtplib
-
     gmail_user = user
     gmail_pwd = pwd
     FROM = user
