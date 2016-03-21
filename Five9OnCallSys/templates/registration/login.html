@@ -6,9 +6,10 @@
 <p>Your username and password didn't match. Please try again.</p>
 {% endif %}
 
-<form method="post" action="{% url 'noclogin' %}">
+<form method="post" action="{% url 'homepage' %}">
 {% csrf_token %}
-<label align = "center"><p>NOC login:</p> </label>
+<div align="center">
+<label align ="center" ><p>LOGIN:</p> </label>
 <table align="center">
 <tr>
     <td>{{ form.username.label_tag }}</td>
@@ -26,6 +27,5 @@
 </tr>
 </table>
 
-</form>
-
+</form></div>
 {% endblock %}

@@ -1,19 +1,13 @@
-from django.shortcuts import render,render_to_response
+from django.shortcuts import render,render_to_response,redirect
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from .forms import LoginForm
-from django.contrib.auth.decorators import login_required
 
 def isAuth(request,group):
-    print group
     return request.user.groups.filter(name= group).exists();
-
-def index(request):
-	 return render(request,'registration/index.html')
-
  
-def manager(request):
+def index(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         username = request.POST.get('username')
@@ -22,36 +16,23 @@ def manager(request):
         if user is not None:
             if user.is_active:
                 login(request,user)
-                return HttpResponseRedirect('/manager')
+                if request.user.groups.filter(name = 'nocops'):
+                    return HttpResponseRedirect('/noc')
+                elif request.user.groups.filter(name = 'managerops'):
+                    return HttpResponseRedirect('/manager')
+                else:
+                    return render(request,'registration/nogroup.html')
             else:
-                return HttpResponseRedirect('login/loginfail.html')
+                print "not is_active"
+                return render(request,'registration/noactive.html')
         else:
+            print "user none"
             return render(request,'registration/loginfail.html')
         
     else:
         form = LoginForm()
          
-    return render(request,'registration/managerlogin.html',{'form':form})
+    return render(request,'registration/login.html',{'form':form})
 
-
-def noc(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(username = username,password = password)
-        if user is not None:
-            if user.is_active:
-                login(request,user)
-                return HttpResponseRedirect('/noc')
-            else:
-                return HttpResponseRedirect('login/loginfail.html')
-        else:
-            return render(request,'registration/loginfail.html')
-        
-    else:
-        form = LoginForm()
-         
-    return render(request,'registration/noclogin.html',{'form':form})
 def test(request):
     return render(request,'registration/test.html')

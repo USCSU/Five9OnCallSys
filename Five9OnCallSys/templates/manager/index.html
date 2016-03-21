@@ -6,8 +6,8 @@
  <form action = "{%url 'managerindex' team %}" method = "post"> 
 	{%csrf_token%}
 	<div style="float:left;width:25%">
- 	
- 	<p><label for= "employee">Employee: <br></label></p>
+ 	 
+ 	<p><label for= "employee">Team {{team}} : <br></label></p>
  	{%for item in emp%}
  	<input type="checkbox" name="employee" value={{item.employeeid}}>{{item}}<br> 
  	{%endfor%}

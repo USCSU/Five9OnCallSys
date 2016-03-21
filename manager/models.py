@@ -7,13 +7,7 @@ class department(models.Model):
 class employee(models.Model):
 	firstName = models.CharField(max_length = 50) #char
 	lastName = models.CharField(max_length = 50) #char
-	number = models.IntegerField(blank = True,null = True)
-	address =  models.CharField(max_length = 100) #text
-	city = models.CharField(max_length=20, blank = True, null = True)
-	state = models.CharField(max_length = 10, blank = True,null = True)
-	zipcode = models.IntegerField(blank = True, null = True)
 	email = models.EmailField() #email
-	mobile = models.CharField(max_length=20) #char
 	employeeid = models.IntegerField(primary_key = True)
 	manager = models.BooleanField()
 	department = models.ForeignKey(department)

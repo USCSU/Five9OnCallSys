@@ -11,6 +11,31 @@ from login.views import isAuth
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 
+def logFormat():
+	logs = []
+	#take top 40 records in revser order 
+	Oplogs = log.objects.all().order_by('-datetime')[:40]
+	#title
+	logs.append('{:>15}  {:>20} {:>20} {:>20}'.format('Time:','Ticket:','Actions:','Departments:'))
+	listOfDepartments = department.objects.all()
+	#take each log and update
+	for singlelog in Oplogs:
+		logtime = singlelog.datetime
+		ticketnumber = singlelog.ticketnumber
+		departlist = ""
+		for item in singlelog.departments:
+			departlist+=item
+		if not singlelog.escalate:
+			content = u"\u2022     "+ '{:<20}  {:<20} {:<20} {:>10}'.format(logtime,'ticket#'+ticketnumber,' sent to ',departlist)
+		else:
+			escalateList=singlelog.oncallUser
+			content = u"\u2022     "+ '{:<20}  {:<20} {:<20} {:>10} '.format(logtime,'ticket#'+ticketnumber,' escalated to ',departlist)
+		logs.append(content)
+	#not log found
+	if not logs:
+		logs.append("No schedule for your team yet")
+	return logs,listOfDepartments
+
 def send_email(user, pwd, recipient, subject, body):
     gmail_user = user
     gmail_pwd = pwd
@@ -18,11 +43,9 @@ def send_email(user, pwd, recipient, subject, body):
     TO = recipient if type(recipient) is list else [recipient]
     SUBJECT = subject
     TEXT = body
-    print TO
     # Prepare actual message
     message = """\From: %s\nTo: %s\nSubject: %s\n\n%s
     """ % (FROM, ", ".join(TO), SUBJECT, TEXT)
-    print message
     try:
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.ehlo()
@@ -100,32 +123,7 @@ def index(request):
 			return render(request,'noc/no_data.html');
 	else:
 		form = NocOpsForm()
-		#take top 40 records in revser order 
-		Oplogs = log.objects.all().order_by('-datetime')[:40]
-		logs = []
-		#title
-		logs.append('{:>15}  {:>20} {:>20} {:>20}'.format('Time:','Ticket:','Actions:','Departments:'))
-		listOfDepartments = department.objects.all()
-		#take each log and update
-		for singlelog in Oplogs:
-			logtime = singlelog.datetime
-			ticketnumber = singlelog.ticketnumber
-			departlist = ""
-			for item in singlelog.departments:
-				departlist+=item
-
-				
-
-			if not singlelog.escalate:
-				content = u"\u2022     "+ '{:<20}  {:<20} {:<20} {:>10}'.format(logtime,'ticket#'+ticketnumber,' sent to ',departlist)
-			else:
-				escalateList=singlelog.oncallUser
-				content = u"\u2022     "+ '{:<20}  {:<20} {:<20} {:>10} '.format(logtime,'ticket#'+ticketnumber,' escalated to ',departlist)
-			 
-			logs.append(content)
-		#not log found
-		if not logs:
-			logs.append("No schedule for your team yet")
+		logs,listOfDepartments = logFormat()
 	 
 	return render(request,'noc/index.html',{'form':form, 'log':logs, 'listOfDepartments':listOfDepartments})
 

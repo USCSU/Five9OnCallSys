@@ -1,80 +1,114 @@
- 
- {%extends "base.html"%}
+<div class="container">
+<div class="row">
+<div class="col-lg-6 col-md-7 col-sm-9">
 
-{%block content%}
-
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
+  <h4 style="border-bottom: 1px solid #c5c5c5;">
+    <i class="glyphicon glyphicon-user">
+    </i>
+    Account Access
+  </h4>
+  <div style="padding: 20px;" id="form-olvidado">
+  <form accept-charset="UTF-8" role="form" id="login-form" method="post">
+    <h4 class="">
+      Signin!
+    </h4>
+      <fieldset>
+        <div class="form-group input-group">
+          <span class="input-group-addon">
+            @
+          </span>
+          <input class="form-control" placeholder="Email" name="email" type="email" required="" autofocus="">
+        </div>
+        <div class="form-group input-group">
+          <span class="input-group-addon">
+            <i class="glyphicon glyphicon-lock">
+            </i>
+          </span>
+          <input class="form-control" placeholder="Password" name="password" type="password" value="" required="">
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary btn-block">
+            Access
           </button>
-          <a class="navbar-brand" href="#">Project name</a>
+          <p class="help-block">
+            <a class="pull-right text-muted" href="#" id="olvidado"><small>Forgot your password?</small></a>
+            <a class="pull-left text-muted" href="#" id="olvidado2"><small>Signup!</small></a>
+
+          </p>
         </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <form class="navbar-form navbar-right">
-            <div class="form-group">
-              <input type="text" placeholder="Email" class="form-control">
-            </div>
-            <div class="form-group">
-              <input type="password" placeholder="Password" class="form-control">
-            </div>
-            <button type="submit" class="btn btn-success">Sign in</button>
-          </form>
-        </div><!--/.navbar-collapse -->
-      </div>
-    </nav>
+      </fieldset>
+    </form>
+  </div>
 
-    <!-- Main jumbotron for a primary marketing message or call to action -->
-    <div class="jumbotron">
-      <div class="container">
-        <h1>Five9 Oncall System</h1>
-        <p>This system mainly take care of ticket system. </p>
-        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
-      </div>
-    </div>
-
-    <div class="container">
-      <!-- Example row of columns -->
-      <div class="row">
-        <div class="col-md-4">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+  <div style="display: none;" id="form-olvidado1">
+    <h4 class="">
+      Forgot your password?
+    </h4>
+    <form accept-charset="UTF-8" role="form" id="login-recordar" method="post">
+      <fieldset>
+        <span class="help-block">
+          Email address you use to log in to your account
+          <br>
+          We'll send you an email with instructions to choose a new password.
+        </span>
+        <div class="form-group input-group">
+          <span class="input-group-addon">
+            @
+          </span>
+          <input class="form-control" placeholder="Email" name="email" type="email" required="">
         </div>
-        <div class="col-md-4">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-       </div>
-        <div class="col-md-4">
-          <h2>Heading</h2>
-          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        <button type="submit" class="btn btn-primary btn-block" id="btn-olvidado">
+          Continue
+        </button>
+        <p class="help-block">
+          <a class="text-muted" href="#" id="acceso1"><small>Account Access</small></a>
+
+        </p>
+      </fieldset>
+    </form>
+  </div>
+<div style="display: none;" id="form-olvidado2">
+    <h4 class="">
+      Welcome!
+    </h4>
+    <form accept-charset="UTF-8" role="form" id="login-recordar" method="post">
+      <fieldset>
+        <span class="help-block">
+          Signup page
+          <br>
+          Please sign up and start!
+        </span>
+        <div class="form-group input-group">
+          <span class="input-group-addon">
+            @
+          </span>
+          <input class="form-control" placeholder="Email" name="email" type="email" required="">
         </div>
-      </div>
 
-      <hr>
+        <div class="form-group input-group">
+          <span class="input-group-addon">
+            <i class="glyphicon glyphicon-lock">
+            </i>
+          </span>
+          <input class="form-control" placeholder="Password" name="password_new" type="password" required="">
+        </div>
+        <div class="form-group input-group">
+          <span class="input-group-addon">
+            <i class="glyphicon glyphicon-lock">
+            </i>
+          </span>
+          <input class="form-control" placeholder="Repeat Password" name="password_new_2" type="password" required="">
+        </div>
 
-      <footer>
-        <p>&copy; 2015 Company, Inc.</p>
-      </footer>
-    </div> <!-- /container -->
-<script src="/static/main.js"></script>
-      <div class="tn aol"> 
-      <input type="text" value="01/01/15 - 01/08/15" id = 'test'>
-      <span class="bv wt"></span>
-    </div>
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="/assets/js/vendor/jquery.min.js"><\/script>')</script>
-    <script src="/static/js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="/static/assets/js/ie10-viewport-bug-workaround.js"></script>
-
-{%endblock%} 
+        <button type="submit" class="btn btn-primary btn-block" id="btn-olvidado">
+          Continue
+        </button>
+        <p class="help-block">
+          <a class="text-muted" href="#" id="acceso2"><small>Account Access</small></a>
+        </p>
+      </fieldset>
+    </form>
+  </div>
+</div>
+</div>
+</div>
