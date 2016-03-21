@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'login',
     'noc',
     'manager',
+    'jquery',
 )
 
 MIDDLEWARE_CLASSES = (
