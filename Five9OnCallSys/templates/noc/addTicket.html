@@ -1,4 +1,4 @@
- {%extends "base.html"%}
+{%extends "base.html"%}
 {%block content%}
 <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
@@ -24,8 +24,21 @@
         </div>  
       </div>
     </nav>
+     <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+        <br><br>
+          <ul class="nav nav-sidebar">
+           
+            <!-- <li><a href="{%url 'nocaddticket'%}">Add Ticket</a></li> -->
+            <br>
+            <br>
+            <li><a href="{%url 'nocindex' %}">Back</a></li>
+            <li><a href="#">Bug Report</a></li>
+          </ul>
+        </div>
     <div class="col-sm-9   col-md-offset-2">
- <form action = "{%url 'nocaddticket' %}" method = "post"> 
+ <form name = 'myForm' action = "{%url 'nocaddticket' %}" onsubmit="return validateForm()" method = "post"> 
 	{%csrf_token%}
 	<table align="center"><br><br><br><br><br>
 	<tr><td><b>Oncall:</b><br><br></td><td><b>Escalated:</b><br><br></td></tr>
@@ -41,10 +54,50 @@
 	<label align = "right"> <br>
 	Ticket #:
  	{{form.Ticket}}
- 	<input  type="submit" value="Send"  />
+ 	<input  type="submit" value="Send" data-toggle="modal" data-target="#smallModal" />
+  <!-- <button type="button" data-toggle="modal" data-target="#basicModal">Submit</button> -->
  	</div>
  	</label>
  	 
 </form>
 </div>
+
+<div class="modal fade" id="basicModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Are you sure?</h4>
+      </div>
+      <div class="modal-body">
+        <h3>You will send ticket to Team {{depart}}</h3>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  // function validateForm() {
+  //   var ticket = document.forms["myForm"]["Ticket"].value;
+    
+  //   if (ticket == null || ticket == "") {
+  //       alert("Please input ticket number");
+  //       return false;
+  //   }else{
+  //     alert("Are you sure?")
+  //     return true;
+  //   }
+  $(function() {
+    $('#myForm').areYouSure(
+      {
+        message: 'It looks like you have been editing something. '
+               + 'If you leave before saving, your changes will be lost.'
+      }
+    );
+  }
+}
+</script>
 {%endblock%} 

@@ -1,5 +1,4 @@
- {%extends "calendar.html"%}
-
+{%extends "base.html"%}
 {%block content%}
 <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
@@ -48,8 +47,8 @@
 </div>
 <!-- js script  -->
 <script src="/static/js/jquery.min.js"></script>
-<script src="/static/js/datepicker.js"></script>
-
+<!-- script for date picker -->
+<script src="/static/js/managerOps.js"></script>
 <script type="text/javascript">
    $.getScript('http://arshaw.com/js/fullcalendar-1.6.4/fullcalendar/fullcalendar.min.js',function(){
   
@@ -80,24 +79,6 @@
   $('#calendar').fullCalendar(list);
 })
 </script>
-<!-- script for date picker -->
-<script type="text/javascript">
-    // When the document is ready
-    $(document).ready(function () {
-        
-        $('#startdate').datepicker({
-            format: "mm/dd/yyyy",
-            minDate: new Date(),
-        });  
-    
-    });
-    $(document).ready(function () {
-        
-        $('#enddate').datepicker({
-            format: "mm/dd/yyyy"
-        });  
-    
-    });
-</script>
+
  
 {%endblock%} 

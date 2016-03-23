@@ -8,6 +8,7 @@
             <div class="account-wall">
                
                 <form class="form-signin" method = "post" action ="{% url 'homepage' %}">
+                <ul class = "errorMessages"></ul>
                 {% csrf_token %}
                 <input type="text" class="form-control" placeholder="Email" name = 'username' required autofocus>
                 <input type="password" class="form-control" placeholder="Password" name = 'password' required>
@@ -22,4 +23,5 @@
         </div>
     </div>
 </div>
+
 {%endblock%} 
