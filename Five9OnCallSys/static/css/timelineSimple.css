@@ -1,0 +1,31 @@
+@import url('https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css');
+.timelineBar {
+    width: 2px;
+    background-color: #BDBDBD;
+    display: inline-block;
+    position: absolute;
+    height: 100%;
+    left: 50%;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.shadowBox {
+    box-shadow: rgba(0, 0, 0, 0.796875) 0px 0px 2px;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.796875) 0px 0px 2px;
+    border:2px solid white;
+    border-radius: 10px;
+    margin: 10px;
+    background-color: #FFFFFF;
+}
+.timelineDot{
+    width: 10px;
+    height: 10px;
+    background-color: #BDBDBD;
+    opacity: 1;
+    display: inline-block;
+    position: absolute;
+    left: 50%;
+    top: 15px;
+    margin-left: 6px;
+    border-radius: 10px;
+}

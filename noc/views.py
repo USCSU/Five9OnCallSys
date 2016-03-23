@@ -11,30 +11,47 @@ from login.views import isAuth
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 
+# def logFormat():
+# 	logs = []
+# 	#take top 40 records in revser order 
+# 	Oplogs = log.objects.all().order_by('-datetime')[:40]
+# 	#title
+# 	logs.append('{:>15}  {:>20} {:>20} {:>20}'.format('Time:','Ticket:','Actions:','Departments:'))
+# 	listOfDepartments = department.objects.all()
+# 	#take each log and update
+# 	for singlelog in Oplogs:
+# 		logtime = singlelog.datetime
+# 		ticketnumber = singlelog.ticketnumber
+# 		departlist = ""
+# 		for item in singlelog.departments:
+# 			departlist+=item
+# 		if not singlelog.escalate:
+# 			content = u"\u2022     "+ '{:<20}  {:<20} {:<20} {:>10}'.format(logtime,'ticket#'+ticketnumber,' sent to ',departlist)
+# 		else:
+# 			escalateList=singlelog.oncallUser
+# 			content = u"\u2022     "+ '{:<20}  {:<20} {:<20} {:>10} '.format(logtime,'ticket#'+ticketnumber,' escalated to ',departlist)
+# 		logs.append(content)
+# 	#not log found
+# 	if not logs:
+# 		logs.append("No schedule for your team yet")
+# 	return logs,listOfDepartments
 def logFormat():
-	logs = []
-	#take top 40 records in revser order 
+	logs=[]
+	#take top 40 records in desc order
 	Oplogs = log.objects.all().order_by('-datetime')[:40]
-	#title
-	logs.append('{:>15}  {:>20} {:>20} {:>20}'.format('Time:','Ticket:','Actions:','Departments:'))
-	listOfDepartments = department.objects.all()
-	#take each log and update
+	#take list of departments
+	# listOfDepartments = department.objects.all()
 	for singlelog in Oplogs:
-		logtime = singlelog.datetime
-		ticketnumber = singlelog.ticketnumber
-		departlist = ""
+		temp = []
+		temp.append(singlelog.datetime)
+		temp.append(singlelog.ticketnumber)
+		departlist=""
 		for item in singlelog.departments:
 			departlist+=item
-		if not singlelog.escalate:
-			content = u"\u2022     "+ '{:<20}  {:<20} {:<20} {:>10}'.format(logtime,'ticket#'+ticketnumber,' sent to ',departlist)
-		else:
-			escalateList=singlelog.oncallUser
-			content = u"\u2022     "+ '{:<20}  {:<20} {:<20} {:>10} '.format(logtime,'ticket#'+ticketnumber,' escalated to ',departlist)
-		logs.append(content)
-	#not log found
-	if not logs:
-		logs.append("No schedule for your team yet")
-	return logs,listOfDepartments
+		temp.append("Logged") if not singlelog.escalate else temp.append("Escalted");
+		temp.append(departlist)
+		logs.append(temp)
+	return logs#,listOfDepartments
 
 def send_email(user, pwd, recipient, subject, body):
     gmail_user = user
@@ -95,15 +112,13 @@ def getOnCallEmployees(listOfDepartments):
 '''
 Index page of noc module
 '''
-
-def index(request):
-	if not isAuth(request,'nocops'):
-		return HttpResponseRedirect('/noc/login/')
-	
+def addTicket(request):
 	if request.method == 'POST':	 
 		form = NocOpsForm(request.POST)
 		escalate = [str(x) for x in request.POST.getlist('escalate')]
 		departlist = [str(x) for x in request.POST.getlist('depart')]
+		print escalate
+		print departlist
 		if form.is_valid() or not escalate and not departlist:
 			#receive request's paramter from html
 			escalateList =  Set(getManagers(escalate))
@@ -114,16 +129,27 @@ def index(request):
 			#send_email("chris.sufive9@gmail.com", "Five9ossqa",list(escalateList), "Status : [Escalated] This is a five9 local test: You've received a ticket from noc", "please reply to take request: ticket number"+ticket)
 			
 			#update log of Noc operation
-			record = log(datetime = datetime.now().strftime("%Y-%m-%d  %H:%M:%S"), ticketnumber = ticket, oncallUser = list(oncallList) , departments = list(departlist),escalate = False)
-			record.save()
-			record = log(datetime = datetime.now().strftime("%Y-%m-%d  %H:%M:%S"), ticketnumber = ticket, oncallUser = list(escalateList) , departments = list(escalate),escalate = True)
-			record.save()
-			return render(request,'noc/formsuccess.html');
+			print "---"
+			print oncallList 
+			print "+++"
+			print escalateList
+			if bool(oncallList):
+				record = log(datetime = datetime.now().strftime("%Y-%m-%d  %H:%M:%S"), ticketnumber = ticket, oncallUser = list(oncallList) , departments = list(departlist),escalate = False)
+				record.save()
+			if bool(escalateList):	
+				record = log(datetime = datetime.now().strftime("%Y-%m-%d  %H:%M:%S"), ticketnumber = ticket, oncallUser = list(escalateList) , departments = list(escalate),escalate = True)
+				record.save()
+			return HttpResponseRedirect('/noc');
 		else:
 			return render(request,'noc/no_data.html');
 	else:
 		form = NocOpsForm()
-		logs,listOfDepartments = logFormat()
-	 
-	return render(request,'noc/index.html',{'form':form, 'log':logs, 'listOfDepartments':listOfDepartments})
+		listOfDepartments = department.objects.all()
+	return render(request,'noc/addTicket.html',{'form':form,  'listOfDepartments':listOfDepartments})
+def index(request):
+	if not isAuth(request,'nocops'):
+		return HttpResponseRedirect('/noc/login/')
+	
+	logs = logFormat()
+	return render(request,'noc/index.html',{ 'log':logs})
 

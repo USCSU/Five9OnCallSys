@@ -1,0 +1,50 @@
+ {%extends "base.html"%}
+{%block content%}
+<nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Five9 Oncall System</a>
+        </div>
+         <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="{% url "django.contrib.auth.views.logout" %}">Logout</a></li>
+           <!--  <li><a href="#">Vie</a></li>
+            <li><a href="#">Profile</a></li>
+            <li><a href="#">Help</a></li> -->
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="Search...">
+          </form>
+        </div>  
+      </div>
+    </nav>
+    <div class="col-sm-9   col-md-offset-2">
+ <form action = "{%url 'nocaddticket' %}" method = "post"> 
+	{%csrf_token%}
+	<table align="center"><br><br><br><br><br>
+	<tr><td><b>Oncall:</b><br><br></td><td><b>Escalated:</b><br><br></td></tr>
+ 	{%for item in listOfDepartments%}
+ 	<tr>
+ 	 	<td alien = "center"><label><input type="checkbox" name="depart" value={{item.name}}>{{item.name}} <br><br></label></td>
+ 	  	<td alien = "right"><label><input type="checkbox" name="escalate" value={{item.name}}>{{item.name}} <br><br></label></td>
+ 	</tr>
+ 	{%endfor%}
+	</table>
+	 
+	<div align="center">
+	<label align = "right"> <br>
+	Ticket #:
+ 	{{form.Ticket}}
+ 	<input  type="submit" value="Send"  />
+ 	</div>
+ 	</label>
+ 	 
+</form>
+</div>
+{%endblock%} 

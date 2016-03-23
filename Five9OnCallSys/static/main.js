@@ -11,14 +11,18 @@ window.onload = function () {
         items[i].addEventListener('mouseout', on_mouse_out);
     }
 };
-$(function() {
-    $( "#startdate" ).datepicker();
-});
-$(function() {
-    $( "#enddate" ).datepicker();
-});
-$(function() {
-    $( "#test" ).datepicker();
-});
-
+$(document).ready(function () {
+                
+                $('#startdate').datepicker({
+                    format: "mm/dd/yyyy"
+                });  
+            
+            });
+$(document).ready(function () {
+                
+                $('#enddate').datepicker({
+                    format: "mm/dd/yyyy"
+                });  
+            
+            });
  

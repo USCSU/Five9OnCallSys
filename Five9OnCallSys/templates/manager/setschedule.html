@@ -1,5 +1,4 @@
- {%extends "calendar.html"%}
-
+{%extends "calendar.html"%}
 {%block content%}
 <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
@@ -25,62 +24,29 @@
         </div>  
       </div>
     </nav>
+    <br><br><br><br><br><br>
+<div align="center" >
 
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-        <br><br>
-          <ul class="nav nav-sidebar">
-           
-            <!-- <li><a href="{%url 'nocaddticket'%}">Add Ticket</a></li> -->
-            <br>
-            <br>
-            <li><a href="{%url 'managerschdule' team%}">Add Schedule</a></li>
-            <li><a href="#">Bug Report</a></li>
-          </ul>
-        </div>
+ <form action = "{%url 'managerindex' team %}" method = "post"> 
+	{%csrf_token%}
+	<div style="float:top;width:25%">
+ 	 
+ 	<p><label for= "employee">Team {{team}} : <br></label></p>
+ 	{%for item in emp%}
+ 	<input type="checkbox" name="employee" value={{item.employeeid}}>{{item}}<br> 
+ 	{%endfor%}
+  	
+  	<p><label for= "startdate">StartDate: </label></p> 
+ 	<input type = "text" name = "startdate" id = "startdate"/></p> 
 
- 
- 
-<div class="container col-sm-9   col-md-offset-2">
-    <hr>
-    <div id="calendar"></div>
+  	<p><label for= "enddate">EndDate: </label></p>
+  	<input type = "text" name = "enddate" id = "enddate"/></p><br><br>
+
+  	<input type="submit" value="Set Schedule"  />
 </div>
-<!-- js script  -->
+</form>
 <script src="/static/js/jquery.min.js"></script>
 <script src="/static/js/datepicker.js"></script>
-
-<script type="text/javascript">
-   $.getScript('http://arshaw.com/js/fullcalendar-1.6.4/fullcalendar/fullcalendar.min.js',function(){
-  
-   
-  var log = {{logs|safe}};
-  var array = [];
-  for(index in log){
-      var row ={
-      title:log[index].name,
-      start : log[index].startdate,
-      end:log[index].enddate,
-      };
-   array.push(row);
- }
- 
-  var list  = {
-    header: {
-      left: 'prev,next today',
-      center: 'title',
-      right: 'month,agendaWeek,agendaDay'
-    },
-    editable: true,
-    color:true,
-    events:array
-  };
-  
-  
-  $('#calendar').fullCalendar(list);
-})
-</script>
-<!-- script for date picker -->
 <script type="text/javascript">
     // When the document is ready
     $(document).ready(function () {
@@ -99,5 +65,4 @@
     
     });
 </script>
- 
-{%endblock%} 
+{%endblock%}

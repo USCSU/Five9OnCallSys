@@ -1,5 +1,5 @@
 from django.shortcuts import render,render_to_response,redirect
-
+import json
 from django.core.urlresolvers import reverse
 from manager.models import department
 from manager.models import employee
@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse,HttpResponseRedirect
 from login.views import isAuth
 from .forms import managerOpsForm
+
 def getSessionTeamInfo(request):
 	username = None
 	if request.user.is_authenticated():
@@ -35,7 +36,7 @@ def onDutySave(departName,start,end,idlist):
 	 	duty.save()
 	return employeelist
 
-def logFormat(opLog):
+def logFormat1(opLog):
 	logs = []
 	logs.append('{:<10}  {:<9} {:<10} {:<10}'.format('FirstName:', 'LastName:','','Schedule:'))
 
@@ -46,6 +47,15 @@ def logFormat(opLog):
 		logs.append(content)
 	if not logs:
 		logs.append("No schedule for your team yet")
+	return logs
+def logformat(opLog):
+	logs = []
+	for singlelog in opLog:
+		row = {}
+		row['name']='%s %s' %(singlelog.employee.firstName,singlelog.employee.lastName)
+		row['startdate'] = str(singlelog.startDate)
+		row['enddate'] = str(singlelog.endDate)
+		logs.append(row)
 	return logs
 
 def index(request,name):
@@ -67,17 +77,45 @@ def index(request,name):
 		#update log file 
 		logSave(name,employeelist,start,end)
 		
-		return render(request,'manager/success.html');
+		return HttpResponseRedirect(reverse('managerindex', args=[getSessionTeamInfo(request)]))
 
 	else:#get method
 		emp = employee.objects.filter(department__name =name)
 		opLog = onDuty.objects.filter(department__name = name).order_by('-endDate')
-		return render(request,'manager/index.html',{'emp':emp,'team':name,'log':logFormat(opLog)})
+		 
 
+		return render(request,'manager/index.html',{'emp':emp,'team':name,  'logs':json.dumps(logformat(opLog))})
 
-def home(request):
+def addSchedule(request,team):
+	#avoid cross visit
 	if not isAuth(request,'managerops'):
 		return HttpResponseRedirect('/manager/login/')
-	# return index(request,depart.name)
-	return HttpResponseRedirect(reverse('managerindex', args=[getSessionTeamInfo(request)]))
+	currentTeam = getSessionTeamInfo(request)
+	if team != currentTeam:
+		return HttpResponseRedirect(reverse('managerindex', args=[currentTeam]))
+	if request.method == 'POST':
+		#take request from html page
+		start= request.POST.get('startdate')
+		end =request.POST.get('enddate')
+		idlist = request.POST.getlist('employee')
+
+		#onduty log file
+		employeelist = onDutySave(name, start,end,idlist)
+		
+		#update log file 
+		logSave(name,employeelist,start,end)
+		
+		return HttpResponseRedirect(reverse('managerindex', args=[getSessionTeamInfo(request)]))
+	else:#get method
+		emp = employee.objects.filter(department__name =team)
+		opLog = onDuty.objects.filter(department__name = team).order_by('-endDate')
+		 
+
+		return render(request,'manager/setschedule.html',{'emp':emp,'team':team,  'logs':json.dumps(logformat(opLog))})
+	 
+# def home(request):
+# 	if not isAuth(request,'managerops'):
+# 		return HttpResponseRedirect('/manager/login/')
+# 	# return index(request,depart.name)
+# 	return HttpResponseRedirect(reverse('managerindex', args=[getSessionTeamInfo(request)]))
 	 
