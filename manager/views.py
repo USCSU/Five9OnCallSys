@@ -19,22 +19,17 @@ def getSessionTeamInfo(request):
 	depart = department.objects.filter(employee__email=username)[0]
 	return depart.name
 
-def logSave(name,employeelist,start,end):
+def logSave(name,person,start,end):
 	managerObj = employee.objects.filter(department__name = name)& employee.objects.filter(manager=True)
 	managername = managerObj[0].firstName + " " + managerObj[0].lastName
-	for person in employeelist:
-		managerlog = log(department = name,manager = managername, startdate=parser.parse(start).strftime("%Y-%m-%d"),enddate= parser.parse(end).strftime("%Y-%m-%d"),oncallUser = person,logtime=datetime.now().strftime("%Y-%m-%d  %H:%M:%S"))
-		managerlog.save()
+	managerlog = log(department = name,manager = managername, startdate=parser.parse(start).strftime("%Y-%m-%d"),enddate= parser.parse(end).strftime("%Y-%m-%d"),oncallUser = person,logtime=datetime.now().strftime("%Y-%m-%d  %H:%M:%S"))
+	managerlog.save()
 
-def onDutySave(departName,start,end,idlist):
+def onDutySave(departName,start,end,id):
 	depart =  department.objects.get(name = departName)
-	employeelist = []
-	for item in idlist:
-	 	emp= employee.objects.get(employeeid =item)
-	 	employeelist.append(emp)
-	 	duty = onDuty(department = depart,startDate = parser.parse(start).strftime("%Y-%m-%d"),endDate= parser.parse(end).strftime("%Y-%m-%d"), employee= emp )
-	 	duty.save()
-	return employeelist
+	emp= employee.objects.get(employeeid =id)
+ 	duty = onDuty(department = depart,startDate = parser.parse(start).strftime("%Y-%m-%d"),endDate= parser.parse(end).strftime("%Y-%m-%d"), employee= emp )
+ 	duty.save()
 
 def logFormat1(opLog):
 	logs = []
@@ -52,6 +47,7 @@ def logformat(opLog):
 	logs = []
 	for singlelog in opLog:
 		row = {}
+		row['id'] = singlelog.id
 		row['name']='%s %s' %(singlelog.employee.firstName,singlelog.employee.lastName)
 		row['startdate'] = str(singlelog.startDate)
 		row['enddate'] = str(singlelog.endDate)
@@ -72,7 +68,7 @@ def index(request,name):
 		idlist = request.POST.getlist('employee')
 	
 		#onduty log file
-		employeelist = onDutySave(name, start,end,idlist)
+		onDutySave(name, start,end,idlist)
 		
 		#update log file 
 		logSave(name,employeelist,start,end)
@@ -97,22 +93,54 @@ def addSchedule(request,team):
 		#take request from html page
 		start= request.POST.get('startdate')
 		end =request.POST.get('enddate')
-		idlist = request.POST.getlist('employee')
-
+		idlist = request.POST.get('user')
+		 
 		#onduty log file
-		employeelist = onDutySave(name, start,end,idlist)
+		onDutySave(team, start,end,idlist)
 		
 		#update log file 
-		logSave(name,employeelist,start,end)
+		logSave(team,idlist,start,end)
 		
-		return HttpResponseRedirect(reverse('managerindex', args=[getSessionTeamInfo(request)]))
+		return HttpResponseRedirect(reverse('managerschdule', args=[team]))
 	else:#get method
 		emp = employee.objects.filter(department__name =team)
 		opLog = onDuty.objects.filter(department__name = team).order_by('-endDate')
-		 
 
-		return render(request,'manager/setschedule.html',{'emp':emp,'team':team,  'logs':json.dumps(logformat(opLog))})
-	 
+
+
+		return render(request,'manager/setschedule.html',{'emp':emp,'team':team, 'log':logformat(opLog),'logs':json.dumps(logformat(opLog))})
+def updateSchedule(request,team):
+	if not isAuth(request,'managerops'):
+		return HttpResponseRedirect('/manager/login/')
+	currentTeam = getSessionTeamInfo(request)
+	if team != currentTeam:
+		return HttpResponseRedirect(reverse('managerindex', args=[currentTeam]))
+	if request.method=='POST':
+		start= request.POST.get('startdate')
+		end =request.POST.get('enddate')
+		user = request.POST.get('user')
+		logid = request.POST.get('log_id')
+		onDuty.objects.filter(id=logid).update(startDate = parser.parse(start).strftime("%Y-%m-%d"), endDate = parser.parse(end).strftime("%Y-%m-%d"), employee_id = user)
+
+		return HttpResponseRedirect(reverse('managerschdule', args=[team]))
+	else:
+		return HttpResponse("fail!")
+
+def deleteSchedule(request,team):
+	if not isAuth(request,'managerops'):
+		return HttpResponseRedirect('/manager/login/')
+	currentTeam = getSessionTeamInfo(request)
+	if team != currentTeam:
+		return HttpResponseRedirect(reverse('managerindex', args=[currentTeam]))
+	if request.method=='POST':
+		logid = request.POST.get('log_id')
+		onDuty.objects.filter(id=logid).delete()
+		return HttpResponseRedirect(reverse('managerschdule', args=[team]))
+	else:
+		return HttpResponse("fail!")
+
+def deleteEntry(request, id):
+	return HttpResponse("<p>The entry is deleted</p>")
 # def home(request):
 # 	if not isAuth(request,'managerops'):
 # 		return HttpResponseRedirect('/manager/login/')

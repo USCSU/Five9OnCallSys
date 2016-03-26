@@ -128,7 +128,17 @@
     </div>
   </div>
 </div>
+  <p><label for= "enddate">EndDate: </label></p>
+    <input type = "text" name = "enddate" id = "enddate"/></p><br><br>
+    <script type="text/javascript">
+       $(document).ready(function () {
 
+          $('#enddate').datepicker({
+            format: "mm/dd/yyyy"
+          });  
 
+        });
+    </script>
+<script src="/static/js/datepicker.js"></script>
   
 {%endblock%} 

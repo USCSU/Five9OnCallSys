@@ -1,19 +1,19 @@
-{%extends "calendar.html"%}
+{%extends "base.html"%}
 {%block content%}
 <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Five9 Oncall System</a>
-        </div>
-         <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="{% url "django.contrib.auth.views.logout" %}">Logout</a></li>
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Five9 Oncall System</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="{% url "django.contrib.auth.views.logout" %}">Logout</a></li>
            <!--  <li><a href="#">Vie</a></li>
             <li><a href="#">Profile</a></li>
             <li><a href="#">Help</a></li> -->
@@ -28,56 +28,253 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
-        <br><br>
+          <br><br>
           <ul class="nav nav-sidebar">
-           
+
             <!-- <li><a href="{%url 'nocaddticket'%}">Add Ticket</a></li> -->
             <br>
             <br>
             <li><a href="{%url 'managerindex' team%}">Back</a></li>
             <li><a href="#">Bug Report</a></li>
+            
           </ul>
         </div>
 
-    <br><br><br><br><br><br>
-<div align="center" >
+        <br><br><br><br><br><br>
 
- <form action = "{%url 'managerindex' team %}" method = "post"> 
-	{%csrf_token%}
-	<div style="float:top;width:25%">
- 	 
- 	<p><label for= "employee">Team {{team}} : <br></label></p>
- 	{%for item in emp%}
- 	<input type="checkbox" name="employee" value={{item.employeeid}}>{{item}}<br> 
- 	{%endfor%}
-  	
-  	<p><label for= "startdate">StartDate: </label></p> 
- 	<input type = "text" name = "startdate" id = "startdate"/></p> 
+        <div class="col-sm-9   col-md-offset-2">
+  <div class="table-responsive">
 
-  	<p><label for= "enddate">EndDate: </label></p>
-  	<input type = "text" name = "enddate" id = "enddate"/></p><br><br>
+    <table class="table table-striped" id="example">
+      <thead>
+        <tr>
+          <!-- <th>#</th> -->
+          <th>Employee</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Operations</th>
+        </tr>
+      </thead>
+      <tfoot>
+        <tr>
+          <!-- <th>#</th> -->
+          <th>Employee</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Operations</th>
+        </tr>
+      </tfoot>
+      <tbody>
 
-  	<input type="submit" value="Set Schedule"  />
+        {%for  val in log%}
+        <tr id = "{{val.id}}"  >
+          <!-- <td> {{forloop.counter}}</label></td> -->
+
+          <td id = "name{{val.id}}">{{val.name}}</td>
+          <td id = "start{{val.id}}">{{val.startdate}}</td>
+          <td id = "end{{val.id}}">{{val.enddate}}</td>
+          <td>
+            <a href="#" class="confirm-delete btn update_row glyphicon glyphicon-pencil" id = "update{{val.id}}" role="button" data-toggle="modal" data-target="#updateModal"></a>
+            <a href="#" class="confirm-delete btn delete_row glyphicon glyphicon-trash" id = "delete{{val.id}}" role="button"  data-toggle="modal" data-target="#deleteModal" ></a>
+            <a href="#"  class = "confirm-delete btn glyphicon glyphicon-plus" id = "new" role="button"  data-toggle="modal" data-target="#addModal"></a>
+          </td>
+        </tr>
+        {%endfor%}
+
+
+      </tbody>
+    </table>
+       
+
+  </div>
 </div>
-</form>
-<script src="/static/js/jquery.min.js"></script>
-<script src="/static/js/datepicker.js"></script>
-<script type="text/javascript">
-    // When the document is ready
-    $(document).ready(function () {
-        
-        $('#startdate').datepicker({
-            format: "mm/dd/yyyy",
+</div>
+
+      <!-- model for add schedule . Will be refactored later-->
+      <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+              <div class="modal-dialog">
+              <!-- modal content -->
+                      <div class="modal-content">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">New Schedule</h4>
+                              </div>
+                        
+                              <div class="modal-body">
+                                  <form action = "{%url 'managerschdule' team%}" method = "post"> <!-- send to Django view  -->
+                                    {%csrf_token%}
+                                      <table class = "table borderless">
+                                          
+                                                    <thead id="tblHead">
+                                                      <tr> 
+                                                          <th>Employee</th>
+                                                          <th>Start Date</th>
+                                                          <th>End Date</th>
+                                                      </tr>
+                                                    </thead>
+                                                      <tr>
+                                                        <td> 
+                                                              <select name = "user" class="form-control">
+                                                             {%for item in emp%}
+                                                             <option value ={{item.employeeid}}>{{item}}</option>
+                                                             {%endfor%}
+                                                             </select>
+                                                       </td>
+                                                        <td>
+                                                              <input type = "text" name = "startdate"  id = "startdate" placeholder="01/01/2016" class = "form-control" /> 
+                                                        </td>
+                                                        <td> 
+                                                              <input type = "text" name = "enddate"   id = "enddate" placeholder="01/01/2016" class = "form-control"/> 
+                                                        </td>
+                                                      </tr>
+                                      </table>
+
+                              </div>
+
+                              <div class="modal-footer">
+                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary">Submit</button></form>
+                              </div>
+
+                      </div>
+              </div>
+     </div>
+
+ <!-- model for update schedule . Will be refactored later-->
+      <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+              <div class="modal-dialog">
+              <!-- modal content -->
+                      <div class="modal-content">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">Update Schedule</h4>
+                              </div>
+                        
+                              <div class="modal-body">
+                                  <form action = "{%url 'updateschedule' team%}" method = "post"> <!-- send to Django view  -->
+                                    {%csrf_token%}
+                                      <table class = "table borderless">
+                                          
+                                                    <thead id="tblHead">
+                                                      <tr> 
+                                                          <th>Employee</th>
+                                                          <th>Start Date</th>
+                                                          <th>End Date</th>
+                                                      </tr>
+                                                    </thead>
+                                                      <tr>
+                                                        <td> 
+                                                              <select name = "user" class="form-control" id = "select1">
+                                                             {%for item in emp%}
+                                                             <option value ={{item.employeeid}}>{{item}}</option>
+                                                             {%endfor%}
+                                                             </select>
+                                                       </td>
+                                                        <td>
+                                                              <input type = "text" name = "startdate" id = "startdate1" placeholder="01/01/2016" class = "form-control" />
+                                                        </td>
+                                                        <td> 
+                                                              <input type = "text" name = "enddate" id = "enddate1" placeholder="01/01/2016" class = "form-control"/> 
+                                                              <input type = "text" name = "log_id" id = "log_id"   class = "form-control hidden"/> 
+                                                        </td>
+                                                      </tr>
+                                      </table>
+
+                              </div>
+
+                              <div class="modal-footer">
+                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary">Submit</button></form>
+                              </div>
+
+                      </div>
+              </div>
+     </div>
+
+
+
+
+<!-- modal for delelte -->
+     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+              <div class="modal-dialog modal-sm">
+              <!-- modal content -->
+                      <div class="modal-content">
+                          <form action = "{%url 'deleteschedule' team%}" method = "post"> <!-- send to Django view  -->
+                              <div class="modal-body">
+                                    <h4 class="modal-title" id="myModalLabel">Delete an on duty record?</h4>
+                                     
+                                    {%csrf_token%}
+                                    <input type = "text" name = "log_id" id = "deletelogid"   class = "form-control hidden"/> 
+                                    
+                              </div>
+                              <div class="modal-footer">
+                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                 <button type="submit" class="btn btn-primary">Submit</button></form>
+                              </div>
+                          </form>
+                      </div>
+              </div>
+     </div>
+</div>
+</div>
+ <p id = "demo"></p>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+      <script>
+      var data = {{logs|safe}}
+        $(document).ready(function() {
+         
+          //datatable js
+          $('#example').DataTable( {
+            "dom": '<"toolbar">frtip'});
+
+          $("div.toolbar").html('<h4>Schedule :</h4>');
+
+          // datepicker for startdate
+          $('#startdate, #enddate, #startdate1, #enddate1').datepicker({
+            format: "yyyy-mm-dd",
             minDate: new Date(),
-        });  
-    
-    });
-    $(document).ready(function () {
+          });  
+         
+        });
+
+         
+        // $('.update_row').on('click', function (e) {
+        //   var index = $(this).parent().parent().attr('id');
+        //    // $('#submit')
+        //   document.getElementById("demo").innerHTML =  $("#name"+index).val();
+        //   // var start = "start"+index;
+        //   // var end = "end"+index;
+        //  alert(name);
+        // });
+        var index;
+        $('.update_row').on('click', function (e) {
+          index = $(this).parent().parent().attr('id');
+          // var name = $("#name"+index).html();
+          var start= $("#start"+index).html();
+          var end = $("#end"+index).html();
+ 
+          $("#startdate1").attr("placeholder",start);
+          $("#startdate1").val(start);
+          $("#enddate1").attr("placeholder",end);
+          $("#enddate1").val(end);
+          $("#log_id").val(index);
+        });
+
+        $('.delete_row').on('click', function (e) {
+          index = $(this).parent().parent().attr('id');
+          $("#deletelogid").val(index);
+        });
+         
         
-        $('#enddate').datepicker({
-            format: "mm/dd/yyyy"
-        });  
-    
-    });
-</script>
-{%endblock%}
+        
+      </script>
+      <script src="/static/js/datepicker.js"></script>
+       <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+      <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css"> 
+<!-- js for datepicker -->
+
+ 
+  {%endblock%}

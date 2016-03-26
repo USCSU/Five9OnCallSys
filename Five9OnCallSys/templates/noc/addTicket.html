@@ -1,19 +1,19 @@
 {%extends "base.html"%}
 {%block content%}
 <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Five9 Oncall System</a>
-        </div>
-         <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="{% url "django.contrib.auth.views.logout" %}">Logout</a></li>
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Five9 Oncall System</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="{% url "django.contrib.auth.views.logout" %}">Logout</a></li>
            <!--  <li><a href="#">Vie</a></li>
             <li><a href="#">Profile</a></li>
             <li><a href="#">Help</a></li> -->
@@ -24,12 +24,12 @@
         </div>  
       </div>
     </nav>
-     <div class="container-fluid">
+    <div class="container-fluid">
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
-        <br><br>
+          <br><br>
           <ul class="nav nav-sidebar">
-           
+
             <!-- <li><a href="{%url 'nocaddticket'%}">Add Ticket</a></li> -->
             <br>
             <br>
@@ -37,67 +37,123 @@
             <li><a href="#">Bug Report</a></li>
           </ul>
         </div>
-    <div class="col-sm-9   col-md-offset-2">
- <form name = 'myForm' action = "{%url 'nocaddticket' %}" onsubmit="return validateForm()" method = "post"> 
-	{%csrf_token%}
-	<table align="center"><br><br><br><br><br>
-	<tr><td><b>Oncall:</b><br><br></td><td><b>Escalated:</b><br><br></td></tr>
- 	{%for item in listOfDepartments%}
- 	<tr>
- 	 	<td alien = "center"><label><input type="checkbox" name="depart" value={{item.name}}>{{item.name}} <br><br></label></td>
- 	  	<td alien = "right"><label><input type="checkbox" name="escalate" value={{item.name}}>{{item.name}} <br><br></label></td>
- 	</tr>
- 	{%endfor%}
-	</table>
-	 
-	<div align="center">
-	<label align = "right"> <br>
-	Ticket #:
- 	{{form.Ticket}}
- 	<input  type="submit" value="Send" data-toggle="modal" data-target="#smallModal" />
-  <!-- <button type="button" data-toggle="modal" data-target="#basicModal">Submit</button> -->
- 	</div>
- 	</label>
- 	 
-</form>
-</div>
 
-<div class="modal fade" id="basicModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">Are you sure?</h4>
-      </div>
-      <div class="modal-body">
-        <h3>You will send ticket to Team {{depart}}</h3>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Send</button>
-      </div>
-    </div>
-  </div>
-</div>
-<script type="text/javascript">
-  // function validateForm() {
-  //   var ticket = document.forms["myForm"]["Ticket"].value;
-    
-  //   if (ticket == null || ticket == "") {
-  //       alert("Please input ticket number");
-  //       return false;
-  //   }else{
-  //     alert("Are you sure?")
-  //     return true;
-  //   }
-  $(function() {
-    $('#myForm').areYouSure(
-      {
-        message: 'It looks like you have been editing something. '
-               + 'If you leave before saving, your changes will be lost.'
-      }
-    );
-  }
-}
-</script>
-{%endblock%} 
+
+        <div class="col-sm-9   col-md-offset-2">
+          <form id = "ticketform" name = 'myForm' action = "{%url 'nocaddticket' %}" method = "post" > 
+          	{%csrf_token%}
+
+            <div class = "container col-sm-9   col-md-offset-2">
+              <div class="form-group border">
+                <label>Ticket</label>
+                <div class="input-group col-xs-5">
+                  <!-- <div class="input-group-addon"> #</div> -->
+                  <input type="text" class="form-control" name="Ticket" id = "ticket" /> <span id = "error_msg" class=" text-danger"></span>
+                </div>
+              </div>
+
+              <div class="form-group border">
+                <div class="row">
+                  <div class="col-xs-4">
+                    <label>OnCall</label>
+                    {%for item in listOfDepartments%}
+                    <div class="checkbox">
+                      <label><input type="checkbox" name="depart" value={{item.name}} class="oncall" /> {{item.name}}</label>
+                    </div>
+                    {%endfor%}
+                    <span id = "error_oncall" class=" text-info"></span>
+                  </div>
+
+                  <div class="col-xs-4">
+                    <label>Escalate</label>
+                    {%for item in listOfDepartments%}
+                    <div class="checkbox" >
+                      <label><input type="checkbox" name="escalate" value={{item.name}}  class="escalate" /> {{item.name}}</label>
+                    </div>
+                    {%endfor%}
+                    <span id = "error_escalate" class=" text-info"></span>
+                  </div>
+                </div>
+              </div>
+              <!-- <button type="submit" class="btn btn-primary" id = "submit" data-toggle="modal" data-target="#basicModal">Submit</button> -->
+              <a href="#" class="confirm-delete btn btn-primary" id = "submit" role="button" data-toggle="modal" data-target="#basicModal">Submit</a>
+
+              <div class="modal fade" id="basicModal" name = "basicModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title" id="myModalLabel">The ticket will be sent to:</h4>
+                    </div>
+                    <div class="modal-body">
+                     <table class="table .table-sm" >
+                      <div class="modal-body">
+
+                        <table class="table table-striped" id="tblGrid">
+                          <thead id="tblHead">
+                            <tr>
+                            <th>Level</th>
+                              <th>Team</th>
+
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>Logged</td>
+                              <td id = 'teamtable1' class="text-left"></td>
+                            </tr>
+                            <tr>
+                              <td>Escalated</td>
+                              <td id = 'teamtable2' class="text-left"></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary">Send</button>
+                        </div>  
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+          <script type="text/javascript">
+               $('#submit').addClass('disabled');
+               $('#error_msg').html("<p >Ticket # can't be empty</p>");
+               // $('#error_oncall').html("<p> choose on_call and/or Escalated team");
+               // $('#error_escalate').html("<p> Please choose Escalate team");
+                $('#ticketform input').blur(function()          //whenever you click off an input element
+                {   
+                  var content = $.trim($(this).val())  
+                        if( ! content) {                      //if it is blank. 
+                          $('#error_msg').html("<p >Ticket # can't be empty</p>");
+                          $('#submit').addClass('disabled');
+                        } 
+                        else if(!$.isNumeric(content)){
+                          $('#error_msg').html("<p >Integer needed for Ticket #</p>");
+                          $('#submit').addClass('disabled');
+                        }
+                        else{
+                          $('#error_msg').html("");
+                          $('#submit').removeClass('disabled');
+                        }
+                      });
+                //bootstrap modal 
+                 
+                $('#basicModal').on('show.bs.modal', function (e) {
+                    $( '.modal-body #teamtable1' ).empty()
+                    $( '.modal-body #teamtable2' ).empty();
+                    var oncalllist = $('.oncall').serializeArray();
+                    var escalatelist = $('.escalate').serializeArray();
+                    jQuery.each( oncalllist, function( i, field ) {
+
+                        $( '.modal-body #teamtable1' ).append( "<b>"+field.value + "<b>,\t" );
+                    });
+                    jQuery.each( escalatelist, function( i, field ) {
+
+                        $( '.modal-body #teamtable2' ).append( "<b>"+field.value + "</b>, \t" );
+                    });
+                    
+                });
+          </script>
+          {%endblock%} 

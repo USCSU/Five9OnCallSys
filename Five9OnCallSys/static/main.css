@@ -1,53 +1,11 @@
-/*h1, h2, h3 {
-    font-size: 1.4em;
-}
+.border{
+  border-bottom:1px solid #ddd;
+  padding-bottom:20px
+  }
 
-a {
-    font-size: 1em;
-}
+  table{width:100%}
 
-ul {
-    list-style-type: none;
+.deleterow{cursor:pointer}
+.borderless td, .borderless th {
+    border: none;
 }
-
-.hovered {
-    opacity: .6;
-}
-
-a {
-    text-decoration: none;
-    color: #33D;
-}
-
-
-table {
-    border-collapse: collapse;
-    align:left;
-}
-
-table, td, th {
-    
-}
-code { 
-    background: hsl(220, 80%, 90%); 
-}
-
-pre {
-    white-space: pre-wrap;
-    background: hsl(30,20%,95%);
-}
-label {
-    display: block;
-    padding-left: 15px;
-    text-indent: -15px;
-}
-/*div {
-    padding-left: 3cm;
-    padding-top: 2cm;
-}*/
-/*div{
-    padding-left: 3cm;
-    padding-top: 2cm;
-    
-    margin-top: -8px;
-}*/*/ 

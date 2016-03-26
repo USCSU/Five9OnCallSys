@@ -51,3 +51,7 @@ def logout(request):
     HttpResponseRedirect("logout")
 def test(request):
     return render(request,'registration/test.html')
+def checkbox(request):
+    return render(request,'registration/checkbox.html')
+def table(request):
+    return render(request,'registration/table.html')

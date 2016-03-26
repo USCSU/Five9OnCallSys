@@ -125,8 +125,8 @@ def addTicket(request):
 			oncallList = Set(getOnCallEmployees(departlist))
 			ticket = form.cleaned_data['Ticket']
 			#email sent
-			#send_email("chris.sufive9@gmail.com", "Five9ossqa",list(oncallList), "Status : [Logged] This is a five9 local test: You've received a ticket from noc", "please reply to take request: ticket number"+ticket)
-			#send_email("chris.sufive9@gmail.com", "Five9ossqa",list(escalateList), "Status : [Escalated] This is a five9 local test: You've received a ticket from noc", "please reply to take request: ticket number"+ticket)
+			# send_email("chris.sufive9@gmail.com", "Five9ossqa",list(oncallList), "Status : [Logged] This is a five9 local test: You've received a ticket from noc", "please reply to take request: ticket number"+ticket)
+			# send_email("chris.sufive9@gmail.com", "Five9ossqa",list(escalateList), "Status : [Escalated] This is a five9 local test: You've received a ticket from noc", "please reply to take request: ticket number"+ticket)
 			
 			#update log of Noc operation
 			print "---"
