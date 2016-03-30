@@ -9,3 +9,19 @@
 .borderless td, .borderless th {
     border: none;
 }
+
+img {
+    max-height: 25%;
+    max-width:25%;
+}
+span {
+    display: inline-block;
+}
+
+.navbar-custom {
+	background-color: #708090;
+  	border-color: #ecf0f1;
+	/*background-color:#708090;*/
+    color:#6A5ACD;
+  	border-radius:2;
+}

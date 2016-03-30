@@ -84,7 +84,7 @@ def getManager(depart_name):
 def getManagers(listOfDepartments):
 	managerList = []
 	for item in listOfDepartments:
-		managerList.append(getManager(item).email)
+		managerList.append(getManager(item).phone)
 	return managerList
 '''
 This funciton is mainly to retrieve employees who will take the duty for one department
@@ -95,10 +95,10 @@ def getOnCallEmployee(depart_name):
 
 	if not ondutylist: # if no employee is on duty, the ticket will be sent to corresponding manager
 		manager = employee.objects.filter(department__name=depart_name) & employee.objects.filter(manager = True)
-		emaillist.append(manager[0].email)
+		emaillist.append(manager[0].phone)
 	else:
 		for item in ondutylist:
-			emaillist.append(item.employee.email)
+			emaillist.append(item.employee.phone)
 
 	return emaillist
 '''
@@ -123,10 +123,10 @@ def addTicket(request):
 			#receive request's paramter from html
 			escalateList =  Set(getManagers(escalate))
 			oncallList = Set(getOnCallEmployees(departlist))
-			ticket = form.cleaned_data['Ticket']
+			ticket = form.cleaned_data['Ticket']#list(oncallList)
 			#email sent
-			# send_email("chris.sufive9@gmail.com", "Five9ossqa",list(oncallList), "Status : [Logged] This is a five9 local test: You've received a ticket from noc", "please reply to take request: ticket number"+ticket)
-			# send_email("chris.sufive9@gmail.com", "Five9ossqa",list(escalateList), "Status : [Escalated] This is a five9 local test: You've received a ticket from noc", "please reply to take request: ticket number"+ticket)
+			send_email("chris.sufive9@gmail.com", "Five9ossqa",list(oncallList), "Status : [Logged] This is a five9 local test: You've received a ticket from noc", "please reply to take request: Outage/Service Alert number: "+ticket)
+			send_email("chris.sufive9@gmail.com", "Five9ossqa",list(escalateList), "Status : [Escalated] This is a five9 local test: You've received a ticket from noc", "please reply to take request: Outage/Service Alert number:"+ticket)
 			
 			#update log of Noc operation
 			print "---"

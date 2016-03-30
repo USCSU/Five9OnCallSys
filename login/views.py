@@ -23,8 +23,9 @@ def index(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(username = username,password = password)
-        print username
-        print password
+        if request.POST.has_key('remember'):
+            print "has key of session"
+            request.session.set_expiry(1209600)
         if user is not None:
             if user.is_active:
                 login(request,user)

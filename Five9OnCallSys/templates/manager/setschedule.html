@@ -1,29 +1,6 @@
 {%extends "base.html"%}
 {%block content%}
-<nav class="navbar navbar-inverse navbar-fixed-top">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">Five9 Oncall System</a>
-    </div>
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="{% url "django.contrib.auth.views.logout" %}">Logout</a></li>
-           <!--  <li><a href="#">Vie</a></li>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Help</a></li> -->
-          </ul>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Search...">
-          </form>
-        </div>  
-      </div>
-    </nav>
+ 
 
     <div class="container-fluid">
       <div class="row">
@@ -34,6 +11,7 @@
             <!-- <li><a href="{%url 'nocaddticket'%}">Add Ticket</a></li> -->
             <br>
             <br>
+            <li><a href="#"  class = "confirm-delete" id = "new" role="button"  data-toggle="modal" data-target="#addModal">Add Schdule</a></li>
             <li><a href="{%url 'managerindex' team%}">Back</a></li>
             <li><a href="#">Bug Report</a></li>
             
@@ -222,6 +200,7 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+    
       <script>
       var data = {{logs|safe}}
         $(document).ready(function() {
@@ -232,23 +211,14 @@
 
           $("div.toolbar").html('<h4>Schedule :</h4>');
 
-          // datepicker for startdate
+          // datepicker for dates
           $('#startdate, #enddate, #startdate1, #enddate1').datepicker({
             format: "yyyy-mm-dd",
-            minDate: new Date(),
+            startDate: new Date(),
           });  
          
         });
 
-         
-        // $('.update_row').on('click', function (e) {
-        //   var index = $(this).parent().parent().attr('id');
-        //    // $('#submit')
-        //   document.getElementById("demo").innerHTML =  $("#name"+index).val();
-        //   // var start = "start"+index;
-        //   // var end = "end"+index;
-        //  alert(name);
-        // });
         var index;
         $('.update_row').on('click', function (e) {
           index = $(this).parent().parent().attr('id');
@@ -271,10 +241,16 @@
         
         
       </script>
-      <script src="/static/js/datepicker.js"></script>
+      
+      <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+      <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css"> -->
+
+
        <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
       <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css"> 
-<!-- js for datepicker -->
+      <script src="/static/js/datepicker.js"></script>
+     
 
  
   {%endblock%}

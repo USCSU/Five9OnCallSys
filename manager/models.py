@@ -8,9 +8,11 @@ class employee(models.Model):
 	firstName = models.CharField(max_length = 50) #char
 	lastName = models.CharField(max_length = 50) #char
 	email = models.EmailField() #email
+	phone = models.EmailField(max_length=50)
 	employeeid = models.IntegerField(primary_key = True)
 	manager = models.BooleanField()
 	department = models.ForeignKey(department)
+
 	def __unicode__(self):
 		# return self.firstName
 		return "%s %s" %(self.firstName, self.lastName)

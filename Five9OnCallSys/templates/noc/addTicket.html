@@ -1,29 +1,6 @@
 {%extends "base.html"%}
 {%block content%}
-<nav class="navbar navbar-inverse navbar-fixed-top">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">Five9 Oncall System</a>
-    </div>
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="{% url "django.contrib.auth.views.logout" %}">Logout</a></li>
-           <!--  <li><a href="#">Vie</a></li>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Help</a></li> -->
-          </ul>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Search...">
-          </form>
-        </div>  
-      </div>
-    </nav>
+ 
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
@@ -45,7 +22,7 @@
 
             <div class = "container col-sm-9   col-md-offset-2">
               <div class="form-group border">
-                <label>Ticket</label>
+                <label>Outage/Service Alert number:</label>
                 <div class="input-group col-xs-5">
                   <!-- <div class="input-group-addon"> #</div> -->
                   <input type="text" class="form-control" name="Ticket" id = "ticket" /> <span id = "error_msg" class=" text-danger"></span>
@@ -83,7 +60,7 @@
                   <div class="modal-content">
                     <div class="modal-header">
                       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                      <h4 class="modal-title" id="myModalLabel">The ticket will be sent to:</h4>
+                      <h4 class="modal-title" id="myModalLabel">Are you sure you want to send message to below teams?</h4>
                     </div>
                     <div class="modal-body">
                      <table class="table .table-sm" >
@@ -145,14 +122,22 @@
                     $( '.modal-body #teamtable2' ).empty();
                     var oncalllist = $('.oncall').serializeArray();
                     var escalatelist = $('.escalate').serializeArray();
-                    jQuery.each( oncalllist, function( i, field ) {
+                    if(oncalllist.length === 0){
+                            $( '.modal-body #teamtable1' ).append( "<b> -<b>\t" );
+                            
+                    }else{
+                            jQuery.each( oncalllist, function( i, field ) {
 
-                        $( '.modal-body #teamtable1' ).append( "<b>"+field.value + "<b>,\t" );
-                    });
-                    jQuery.each( escalatelist, function( i, field ) {
-
-                        $( '.modal-body #teamtable2' ).append( "<b>"+field.value + "</b>, \t" );
-                    });
+                                $( '.modal-body #teamtable1' ).append( "<b>"+field.value + "<b>,\t" );
+                            });
+                    }
+                    if(escalatelist.length ===0){
+                            $( '.modal-body #teamtable2' ).append( "<b> -<b>\t" );
+                    }else{
+                            jQuery.each( escalatelist, function( i, field ) {
+                                $( '.modal-body #teamtable2' ).append( "<b>"+field.value + "</b>, \t" );
+                            });
+                    }
                     
                 });
           </script>

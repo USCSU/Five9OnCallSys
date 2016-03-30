@@ -7,7 +7,7 @@ class departmentAdmin(admin.ModelAdmin):
 	list_display=['name']
 
 class employeeAdmin(admin.ModelAdmin):
-	list_display = ['firstName','lastName','email']
+	list_display = ['firstName','lastName','email','phone']
 
 class logAdmin(admin.ModelAdmin):
 	list_display = ['datetime','oncallUser']
