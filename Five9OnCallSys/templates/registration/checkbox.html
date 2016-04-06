@@ -1,66 +1,49 @@
 {%extends "base.html"%}
 {%block content%}
-
-<div class="container">
-    <div class="row clearfix">
-        <div class="col-md-12 column">
-            <table class="table table-bordered table-hover" id="tab_logic">
-                <thead>
-                    <tr >
-                        <th class="text-center">
-                            #
-                        </th>
-                        <th class="text-center">
-                            Name
-                        </th>
-                        <th class="text-center">
-                            Mail
-                        </th>
-                        <th class="text-center">
-                            Mobile
-                        </th>
-
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr id='addr0'>
-                        <td>
-                        1
-                        </td>
-                        <td>
-                        <input type="text" name='name0'  placeholder='Name' class="form-control"/>
-                        </td>
-                        <td>
-                        <input type="text" name='mail0' placeholder='Mail' class="form-control"/>
-                        </td>
-                        <td>
-                        <input type="text" name='mobile0' placeholder='Mobile' class="form-control"/>
-                        </td>
-                         <td><a href="#" class="confirm-delete btn mini red-stripe" id = "delete" role="button" data-title="johnny" data-id="1">Delete</a></td>
-                    </tr>
-                    <tr id='addr1'></tr>
-                </tbody>
-            </table>
+ <br><br><br>
+  <div class="container">
+    <div class='col-md-5'>
+        <div class="form-group">
+            <div class='input-group date' id='datetimepicker6'>
+                <input type='text' class="form-control" />
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
         </div>
     </div>
-    <a id="add_row" class="btn btn-default pull-left">Add Row</a><a id='delete_row' class="pull-right btn btn-default">Delete Row</a>
+    <div class='col-md-5'>
+        <div class="form-group">
+            <div class='input-group date' id='datetimepicker7'>
+                <input type='text' class="form-control" />
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+    </div>
 </div>
 <script type="text/javascript">
-         $(document).ready(function(){
-      var i=1;
-     $("#add_row").click(function(){
-      $('#addr'+i).html("<td>"+ (i+1) +"</td><td><input name='name"+i+"' type='text' placeholder='Name' class='form-control input-md'  /> </td><td><input  name='mail"+i+"' type='text' placeholder='Mail'  class='form-control input-md'></td><td><input  name='mobile"+i+"' type='text' placeholder='Mobile'  class='form-control input-md'></td>");
-
-      $('#tab_logic').append('<tr id="addr'+(i+1)+'"></tr>');
-      i++; 
-  });
-     $("#delete_row").click(function(){
-         if(i>=1){
-         $("#addr"+(i-1)).html('');
-         i--;
-         }
-     });
-
-});
+    $(function () {
+        $('#datetimepicker6').datetimepicker({format : "YYYY-MM-DD   HH:mm"});
+        $('#datetimepicker7').datetimepicker({
+            useCurrent: false //Important! See issue #1075
+        });
+        $("#datetimepicker6").on("dp.change", function (e) {
+            $('#datetimepicker7').data("DateTimePicker").minDate(e.date);
+        });
+        $("#datetimepicker7").on("dp.change", function (e) {
+            $('#datetimepicker6').data("DateTimePicker").maxDate(e.date);
+        });
+    });
 </script>
-{%endblock%}
+<!-- <script src="/static/js/jquery.min.js"></script> -->
+<script src="/static/js/moment.min.js"></script>
+<!-- <script src="/static/js/bootstrap.min.js"></script> -->
+<script src="/static/js/bootstrap-datetimepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/css/bootstrap-datetimepicker.min.css">
+<!-- <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css"> -->
+ 
+ 
+  {%endblock%}
+ 

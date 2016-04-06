@@ -18,16 +18,16 @@ class employee(models.Model):
 		return "%s %s" %(self.firstName, self.lastName)
 
 class onDuty(models.Model):
-	startDate = models.DateField()
-	endDate = models.DateField()
+	startDate = models.DateTimeField()
+	endDate = models.DateTimeField()
 	employee = models.ForeignKey(employee)
 	department = models.ForeignKey(department)
 
 class log(models.Model):
 	department = models.CharField(max_length = 20)
 	manager = models.CharField(max_length = 20)
-	startdate = models.DateField()
-	enddate = models.DateField()
+	startdate = models.DateTimeField()
+	enddate = models.DateTimeField()
 	oncallUser = models.CharField(max_length = 255)
 	logtime = models.CharField(max_length = 100)
 		 

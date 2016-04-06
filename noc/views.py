@@ -10,31 +10,13 @@ from django.contrib.auth.decorators import login_required
 from login.views import isAuth
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
+import pytz
+from pytz import timezone
 
-# def logFormat():
-# 	logs = []
-# 	#take top 40 records in revser order 
-# 	Oplogs = log.objects.all().order_by('-datetime')[:40]
-# 	#title
-# 	logs.append('{:>15}  {:>20} {:>20} {:>20}'.format('Time:','Ticket:','Actions:','Departments:'))
-# 	listOfDepartments = department.objects.all()
-# 	#take each log and update
-# 	for singlelog in Oplogs:
-# 		logtime = singlelog.datetime
-# 		ticketnumber = singlelog.ticketnumber
-# 		departlist = ""
-# 		for item in singlelog.departments:
-# 			departlist+=item
-# 		if not singlelog.escalate:
-# 			content = u"\u2022     "+ '{:<20}  {:<20} {:<20} {:>10}'.format(logtime,'ticket#'+ticketnumber,' sent to ',departlist)
-# 		else:
-# 			escalateList=singlelog.oncallUser
-# 			content = u"\u2022     "+ '{:<20}  {:<20} {:<20} {:>10} '.format(logtime,'ticket#'+ticketnumber,' escalated to ',departlist)
-# 		logs.append(content)
-# 	#not log found
-# 	if not logs:
-# 		logs.append("No schedule for your team yet")
-# 	return logs,listOfDepartments
+def getcurrentPST():
+	format = "%Y-%m-%d %H:%M"
+	return datetime.now(tz=pytz.utc).astimezone(timezone('US/Pacific')).strftime(format)
+
 def logFormat():
 	logs=[]
 	#take top 40 records in desc order
@@ -91,8 +73,10 @@ This funciton is mainly to retrieve employees who will take the duty for one dep
 '''
 def getOnCallEmployee(depart_name):
 	emaillist = []
-	ondutylist = onDuty.objects.filter(department__name =depart_name) & onDuty.objects.filter(startDate__lte=datetime.now) &onDuty.objects.filter(endDate__gte=datetime.now)
-
+	currentTime = getcurrentPST() #get pst time
+	ondutylist = onDuty.objects.filter(department__name =depart_name) & onDuty.objects.filter(startDate__lte= currentTime) &onDuty.objects.filter(endDate__gte=currentTime)
+	print "onduty"
+	print ondutylist
 	if not ondutylist: # if no employee is on duty, the ticket will be sent to corresponding manager
 		manager = employee.objects.filter(department__name=depart_name) & employee.objects.filter(manager = True)
 		emaillist.append(manager[0].phone)
@@ -125,8 +109,10 @@ def addTicket(request):
 			oncallList = Set(getOnCallEmployees(departlist))
 			ticket = form.cleaned_data['Ticket']#list(oncallList)
 			#email sent
-			send_email("chris.sufive9@gmail.com", "Five9ossqa",list(oncallList), "Status : [Logged] This is a five9 local test: You've received a ticket from noc", "please reply to take request: Outage/Service Alert number: "+ticket)
-			send_email("chris.sufive9@gmail.com", "Five9ossqa",list(escalateList), "Status : [Escalated] This is a five9 local test: You've received a ticket from noc", "please reply to take request: Outage/Service Alert number:"+ticket)
+			if bool(oncallList):
+				send_email("chris.sufive9@gmail.com", "Five9ossqa",list(oncallList), " Outrage bridge#:925-201-2000", "Outage/Service Alert #: "+ticket) 
+			if bool(escalateList):	
+				send_email("chris.sufive9@gmail.com", "Five9ossqa",list(escalateList), "Outrage bridge#:925-201-2000", "Outage/Service Alert #:"+ticket) 
 			
 			#update log of Noc operation
 			print "---"
@@ -134,10 +120,10 @@ def addTicket(request):
 			print "+++"
 			print escalateList
 			if bool(oncallList):
-				record = log(datetime = datetime.now().strftime("%Y-%m-%d  %H:%M:%S"), ticketnumber = ticket, oncallUser = list(oncallList) , departments = list(departlist),escalate = False)
+				record = log(datetime = getcurrentPST(), ticketnumber = ticket, oncallUser = list(oncallList) , departments = list(departlist),escalate = False)
 				record.save()
 			if bool(escalateList):	
-				record = log(datetime = datetime.now().strftime("%Y-%m-%d  %H:%M:%S"), ticketnumber = ticket, oncallUser = list(escalateList) , departments = list(escalate),escalate = True)
+				record = log(datetime = getcurrentPST(), ticketnumber = ticket, oncallUser = list(escalateList) , departments = list(escalate),escalate = True)
 				record.save()
 			return HttpResponseRedirect('/noc');
 		else:

@@ -48,9 +48,9 @@
         <tr id = "{{val.id}}"  >
           <!-- <td> {{forloop.counter}}</label></td> -->
 
-          <td id = "name{{val.id}}">{{val.name}}</td>
-          <td id = "start{{val.id}}">{{val.startdate}}</td>
-          <td id = "end{{val.id}}">{{val.enddate}}</td>
+          <td id = "name{{val.id}}">{{val.name}}{{val.id}}</td>
+          <td id = "start{{val.id}}">{{val.startdate | date:" Y/m/d h:i A"}}</td>
+          <td id = "end{{val.id}}">{{val.enddate| date:" Y/m/d h:i A"}}</td>
           <td>
             <a href="#" class="confirm-delete btn update_row glyphicon glyphicon-pencil" id = "update{{val.id}}" role="button" data-toggle="modal" data-target="#updateModal"></a>
             <a href="#" class="confirm-delete btn delete_row glyphicon glyphicon-trash" id = "delete{{val.id}}" role="button"  data-toggle="modal" data-target="#deleteModal" ></a>
@@ -99,10 +99,10 @@
                                                              </select>
                                                        </td>
                                                         <td>
-                                                              <input type = "text" name = "startdate"  id = "startdate" placeholder="01/01/2016" class = "form-control" /> 
+                                                              <input type = "text" name = "startdate"  id = "datetimepicker1" placeholder="01/01/2016" class = "form-control" /> 
                                                         </td>
                                                         <td> 
-                                                              <input type = "text" name = "enddate"   id = "enddate" placeholder="01/01/2016" class = "form-control"/> 
+                                                              <input type = "text" name = "enddate"   id = "datetimepicker2" placeholder="01/01/2016" class = "form-control"/> 
                                                         </td>
                                                       </tr>
                                       </table>
@@ -149,10 +149,10 @@
                                                              </select>
                                                        </td>
                                                         <td>
-                                                              <input type = "text" name = "startdate" id = "startdate1" placeholder="01/01/2016" class = "form-control" />
+                                                              <input type = "text" name = "startdate" id = "datetimepicker3" placeholder="01/01/2016" class = "form-control" />
                                                         </td>
                                                         <td> 
-                                                              <input type = "text" name = "enddate" id = "enddate1" placeholder="01/01/2016" class = "form-control"/> 
+                                                              <input type = "text" name = "enddate" id = "datetimepicker4" placeholder="01/01/2016" class = "form-control"/> 
                                                               <input type = "text" name = "log_id" id = "log_id"   class = "form-control hidden"/> 
                                                         </td>
                                                       </tr>
@@ -208,17 +208,14 @@
           //datatable js
           $('#example').DataTable( {
             "dom": '<"toolbar">frtip'});
-
           $("div.toolbar").html('<h4>Schedule :</h4>');
-
           // datepicker for dates
-          $('#startdate, #enddate, #startdate1, #enddate1').datepicker({
-            format: "yyyy-mm-dd",
-            startDate: new Date(),
-          });  
+          // $('#startdate, #enddate, #startdate1, #enddate1').datepicker({
+          //   format: "yyyy-mm-dd",
+          //   startDate: new Date(),
+          // });  
          
         });
-
         var index;
         $('.update_row').on('click', function (e) {
           index = $(this).parent().parent().attr('id');
@@ -226,22 +223,48 @@
           var start= $("#start"+index).html();
           var end = $("#end"+index).html();
  
-          $("#startdate1").attr("placeholder",start);
-          $("#startdate1").val(start);
-          $("#enddate1").attr("placeholder",end);
-          $("#enddate1").val(end);
+          $("#datetimepicker3").attr("placeholder",start);
+          $("#datetimepicker3").val(start);
+          $("#datetimepicker4").attr("placeholder",end);
+          $("#datetimepicker4").val(end);
           $("#log_id").val(index);
         });
-
         $('.delete_row').on('click', function (e) {
-          index = $(this).parent().parent().attr('id');
-          $("#deletelogid").val(index);
-        });
-         
-        
-        
+           index = $(this).parent().parent().attr('id');
+           $("#deletelogid").val(index);
+         });
       </script>
-      
+       <!-- script for datetime picker -->
+      <script type="text/javascript">
+      $(function () {
+        $('#datetimepicker1').datetimepicker({
+          minDate:new Date(),
+        });
+        $('#datetimepicker2').datetimepicker({
+            minDate:new Date(),
+        });
+        $("#datetimepicker1").on("dp.change", function (e) {
+            $('#datetimepicker2').data("DateTimePicker").minDate(e.date);
+        });
+        $("#datetimepicker2").on("dp.change", function (e) {
+            $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
+        });
+
+
+        $('#datetimepicker3').datetimepicker({
+          minDate:new Date(),
+        });
+        $('#datetimepicker4').datetimepicker({
+            minDate:new Date(),
+        });
+        $("#datetimepicker3").on("dp.change", function (e) {
+            $('#datetimepicker4').data("DateTimePicker").minDate(e.date);
+        });
+        $("#datetimepicker4").on("dp.change", function (e) {
+            $('#datetimepicker3').data("DateTimePicker").maxDate(e.date);
+        });
+      });
+    </script>
       <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
       <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
       <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css"> -->
@@ -249,7 +272,14 @@
 
        <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
       <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css"> 
-      <script src="/static/js/datepicker.js"></script>
+      <!-- <script src="/static/js/jquery.min.js"></script> -->
+      <script src="/static/js/moment.min.js"></script>
+      <!-- <script src="/static/js/bootstrap.min.js"></script> -->
+      <script src="/static/js/bootstrap-datetimepicker.min.js"></script>
+      <link rel="stylesheet" type="text/css" href="/static/css/bootstrap-datetimepicker.min.css">
+           <!-- <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script> -->
+      <!-- <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">  -->
+      
      
 
  

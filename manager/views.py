@@ -22,13 +22,13 @@ def getSessionTeamInfo(request):
 def logSave(name,person,start,end):
 	managerObj = employee.objects.filter(department__name = name)& employee.objects.filter(manager=True)
 	managername = managerObj[0].firstName + " " + managerObj[0].lastName
-	managerlog = log(department = name,manager = managername, startdate=parser.parse(start).strftime("%Y-%m-%d"),enddate= parser.parse(end).strftime("%Y-%m-%d"),oncallUser = person,logtime=datetime.now().strftime("%Y-%m-%d  %H:%M:%S"))
+	managerlog = log(department = name,manager = managername, startdate=parser.parse(start).strftime("%Y-%m-%d %H:%M"),enddate= parser.parse(end).strftime("%Y-%m-%d %H:%M"),oncallUser = person,logtime=datetime.now().strftime("%Y-%m-%d  %H:%M:%S"))
 	managerlog.save()
 
 def onDutySave(departName,start,end,id):
 	depart =  department.objects.get(name = departName)
 	emp= employee.objects.get(employeeid =id)
- 	duty = onDuty(department = depart,startDate = parser.parse(start).strftime("%Y-%m-%d"),endDate= parser.parse(end).strftime("%Y-%m-%d"), employee= emp )
+ 	duty = onDuty(department = depart,startDate = datetime.strptime(start, "%m/%d/%Y %H:%M %p"),endDate= datetime.strptime(end, "%m/%d/%Y %H:%M %p"), employee= emp )
  	duty.save()
 
 def logFormat1(opLog):
@@ -43,14 +43,23 @@ def logFormat1(opLog):
 	if not logs:
 		logs.append("No schedule for your team yet")
 	return logs
+
+def json_serial(obj):
+    """JSON serializer for objects not serializable by default json code"""
+
+    if isinstance(obj, datetime):
+        serial = obj.isoformat()
+        return serial
+    raise TypeError ("Type not serializable")
+
 def logformat(opLog):
 	logs = []
 	for singlelog in opLog:
 		row = {}
 		row['id'] = singlelog.id
 		row['name']='%s %s' %(singlelog.employee.firstName,singlelog.employee.lastName)
-		row['startdate'] = str(singlelog.startDate)
-		row['enddate'] = str(singlelog.endDate)
+		row['startdate'] = singlelog.startDate
+		row['enddate'] = singlelog.endDate
 		logs.append(row)
 	return logs
 
@@ -80,7 +89,7 @@ def index(request,name):
 		opLog = onDuty.objects.filter(department__name = name).order_by('-endDate')
 		 
 
-		return render(request,'manager/index.html',{'emp':emp,'team':name,  'logs':json.dumps(logformat(opLog))})
+		return render(request,'manager/index.html',{'emp':emp,'team':name,  'logs':json.dumps(logformat(opLog),default = json_serial)})
 
 def addSchedule(request,team):
 	#avoid cross visit
@@ -108,7 +117,7 @@ def addSchedule(request,team):
 
 
 
-		return render(request,'manager/setschedule.html',{'emp':emp,'team':team, 'log':logformat(opLog),'logs':json.dumps(logformat(opLog))})
+		return render(request,'manager/setschedule.html',{'emp':emp,'team':team, 'log':logformat(opLog),'logs':json.dumps(logformat(opLog),default = json_serial)})
 def updateSchedule(request,team):
 	if not isAuth(request,'managerops'):
 		return HttpResponseRedirect('/manager/login/')
@@ -120,7 +129,7 @@ def updateSchedule(request,team):
 		end =request.POST.get('enddate')
 		user = request.POST.get('user')
 		logid = request.POST.get('log_id')
-		onDuty.objects.filter(id=logid).update(startDate = parser.parse(start).strftime("%Y-%m-%d"), endDate = parser.parse(end).strftime("%Y-%m-%d"), employee_id = user)
+		onDuty.objects.filter(id=logid).update(startDate = parser.parse(start).strftime("%Y-%m-%d %H:%M"), endDate = parser.parse(end).strftime("%Y-%m-%d %H:%M"), employee_id = user)
 
 		return HttpResponseRedirect(reverse('managerschdule', args=[team]))
 	else:
