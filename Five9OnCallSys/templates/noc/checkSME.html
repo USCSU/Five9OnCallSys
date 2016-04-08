@@ -11,26 +11,17 @@
             <!-- <li><a href="{%url 'nocaddticket'%}">Add Ticket</a></li> -->
             <br>
             <br>
-            <li><a href="{%url 'managerschdule' team%}">Manage Schedules</a></li>
+            <li><a href="{%url 'nocindex' %}">Back</a></li>
             <li><a href="#">Bug Report</a></li>
           </ul>
         </div>
 
-
-
-
- <script type="text/javascript" src="/static/js/moment.min.js"></script>
-<!-- <link rel="stylesheet" type="text/css" href="/static/css/fullcalendar.css"> -->
-<!-- <link rel="stylesheet" type="text/css" href="/static/css/fullcanlendar.print.css"> -->
-
-
-
-
+ 
+ 
 <div class="container col-sm-9   col-md-offset-2">
     
     <div id="calendar"></div>
 </div>
-<!-- <link rel="stylesheet" type="text/css" href="/static/css/"> -->
 <!-- js script  -->
 <script src="/static/js/jquery.min.js"></script>
 <!-- script for date picker -->
@@ -58,17 +49,14 @@
       right: 'month,agendaWeek,agendaDay'
     },
     editable: true,
-    eventLimit: true,
     color:true,
-    events:array,
-     
+    events:array
   };
-  
-  
+
+
   $('#calendar').fullCalendar(list);
 })
 </script>
-
 
  
 {%endblock%} 

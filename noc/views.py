@@ -1,3 +1,6 @@
+import smtplib
+import json
+import pytz
 from django.shortcuts import render
 from django.http import HttpResponse,HttpResponseRedirect
 from manager.models import department,employee,onDuty
@@ -5,17 +8,31 @@ from noc.forms import NocOpsForm
 from noc.models import log
 from datetime import datetime
 from sets import Set
-import smtplib
 from django.contrib.auth.decorators import login_required
 from login.views import isAuth
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
-import pytz
 from pytz import timezone
+from dateutil import parser
 
+def json_serial(obj):
+    """JSON serializer for objects not serializable by default json code"""
+
+    if isinstance(obj, datetime):
+        serial = obj.isoformat()
+        return serial
+    raise TypeError ("Type not serializable")
+
+def getPSTDateTime():
+	return datetime.now(tz=pytz.utc).astimezone(timezone('US/Pacific'))
 def getcurrentPST():
 	format = "%Y-%m-%d %H:%M"
-	return datetime.now(tz=pytz.utc).astimezone(timezone('US/Pacific')).strftime(format)
+	return getPSTDateTime().strftime(format)
+def getNext24PST():
+	format = "%Y-%m-%d %H:%M"
+	current = getPSTDateTime()
+	next24=current.replace(day = current.day+1)
+	return next24.strftime(format)
 
 def logFormat():
 	logs=[]
@@ -74,11 +91,11 @@ This funciton is mainly to retrieve employees who will take the duty for one dep
 def getOnCallEmployee(depart_name):
 	emaillist = []
 	currentTime = getcurrentPST() #get pst time
-	ondutylist = onDuty.objects.filter(department__name =depart_name) & onDuty.objects.filter(startDate__lte= currentTime) &onDuty.objects.filter(endDate__gte=currentTime)
+	ondutylist = onDuty.objects.filter(department__name =depart_name).filter(startDate__lte= currentTime).filter(endDate__gte=currentTime)
 	print "onduty"
 	print ondutylist
 	if not ondutylist: # if no employee is on duty, the ticket will be sent to corresponding manager
-		manager = employee.objects.filter(department__name=depart_name) & employee.objects.filter(manager = True)
+		manager = employee.objects.filter(department__name=depart_name).filter(manager = True)
 		emaillist.append(manager[0].phone)
 	else:
 		for item in ondutylist:
@@ -138,4 +155,74 @@ def index(request):
 	
 	logs = logFormat()
 	return render(request,'noc/index.html',{ 'log':logs})
+
+def filterDepartmentName(team):
+	result = ""
+	if 'IT' in team:
+		result = 'IT' 
+	if 'INFO' in team:
+		result = 'INFO' 
+	if 'Center' in team:
+		result = 'DCNTER' 
+	if 'SYS' in team:
+		result = 'SYS' 
+	if 'Network' in team:
+		result = 'Network' 
+	if 'NOC' in team:
+		result = 'NOC' 
+	if 'DB' in team:
+		result = 'DB' 
+	
+	return result
+'''format the query from database; list is db query set'''
+def dutylistFormat():
+	dutylist = []
+	dbquery = onDuty.objects.all()
+	for singlelog in dbquery:
+		row = {}
+		row['id'] = singlelog.id
+		team = department.objects.filter(departmentid =singlelog.department_id)[0].name
+
+		row['name']='%s:%s %s' %(filterDepartmentName(team),singlelog.employee.firstName,singlelog.employee.lastName)
+		row['startdate'] = singlelog.startDate
+		row['enddate'] = singlelog.endDate
+		dutylist.append(row)
+	return dutylist
+
+''' check SME view page'''
+def checkSME(request):
+	if not isAuth(request,'nocops'):
+		return HttpResponseRedirect('/noc/login/')
+	return render(request,'noc/checkSME.html',{'logs':json.dumps(dutylistFormat(),default = json_serial)});
+
+def getOnDutyByDeparment(nameOfDepart,next24):
+	log = []
+
+	ondutyobjs  = onDuty.objects.filter(department__name=nameOfDepart).filter(endDate__gte = next24).filter(startDate__lte=next24)
+	for item in ondutyobjs:
+		row = {}
+		empid = item.employee_id
+		emp = employee.objects.get(employeeid = empid)
+		row['startdate'] = item.startDate.strftime("%m/%d %I:%M %p")
+		row['enddate'] = item.endDate.strftime("%m/%d %I:%M %p")
+		row['department'] = nameOfDepart
+		row['employee'] =  '%s %s' %(emp.firstName, emp.lastName) 
+		log.append(row)
+	return log
+
+'''check SME table view'''
+def checkSMETable(request):
+	if not isAuth(request,'nocops'):
+		return HttpResponseRedirect('/noc/login/')
+	next24 = getNext24PST() # next 24 hour end time
+	departlist = [item['name'] for item in department.objects.values('name')]
+	print departlist
+	logs = []
+	for depart in departlist:
+	 	temp = getOnDutyByDeparment(depart,next24)
+	 	if temp:
+			logs.extend(temp)
+	print "!@#$!@#%@#&#%$"
+	print logs
+	return render(request,'noc/checkSMETable.html',{'logs':logs});
 

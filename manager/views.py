@@ -61,6 +61,7 @@ def logformat(opLog):
 		row['startdate'] = singlelog.startDate
 		row['enddate'] = singlelog.endDate
 		logs.append(row)
+	print logs
 	return logs
 
 def index(request,name):
@@ -88,7 +89,6 @@ def index(request,name):
 		emp = employee.objects.filter(department__name =name)
 		opLog = onDuty.objects.filter(department__name = name).order_by('-endDate')
 		 
-
 		return render(request,'manager/index.html',{'emp':emp,'team':name,  'logs':json.dumps(logformat(opLog),default = json_serial)})
 
 def addSchedule(request,team):

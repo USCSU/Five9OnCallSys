@@ -19,6 +19,9 @@ urlpatterns = [
 
 	url(r'^noc/Add_Ticket$', noc.addTicket,name ='nocaddticket'),
 
+	url(r'^noc/SME_Calendar$', noc.checkSME,name ='nocsme'),
+	url(r'^noc/SME_Table$', noc.checkSMETable,name ='nocsmetable'),
+
     url(r'^logout/$','django.contrib.auth.views.logout',{'next_page': '/'}),
     
     url(r'test/$',login.test,name='test'),

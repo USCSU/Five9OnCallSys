@@ -43,12 +43,11 @@
         </tr>
       </tfoot>
       <tbody>
-
         {%for  val in log%}
         <tr id = "{{val.id}}"  >
           <!-- <td> {{forloop.counter}}</label></td> -->
 
-          <td id = "name{{val.id}}">{{val.name}}{{val.id}}</td>
+          <td id = "name{{val.id}}">{{val.name}}</td>
           <td id = "start{{val.id}}">{{val.startdate | date:" Y/m/d h:i A"}}</td>
           <td id = "end{{val.id}}">{{val.enddate| date:" Y/m/d h:i A"}}</td>
           <td>

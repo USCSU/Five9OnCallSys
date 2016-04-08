@@ -1,0 +1,72 @@
+{%extends "base.html"%}
+{%block content%}
+<div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <br><br>
+          <ul class="nav nav-sidebar">
+
+            <!-- <li><a href="{%url 'nocaddticket'%}">Add Ticket</a></li> -->
+            <br>
+            <br>
+            <li><a href="{%url 'nocindex'%}">Back</a></li>
+            <li><a href="#">Bug Report</a></li>
+            
+          </ul>
+        </div>
+
+        <br><br><br><br><br><br>
+
+        <div class="col-sm-9   col-md-offset-2">
+  <div class="table-responsive">
+
+  <table class="table   table-hover" width="744" id="example">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Team</th>
+          <th>Employee</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+        </tr>
+      </thead>
+      <tfoot>
+        <tr>
+          <th>#</th>
+          <th>Team</th>
+          <th>Employee</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+         
+        </tr>
+      </tfoot>
+      <tbody>
+        {%for  val in logs%}
+       	<tr class = {{val.department}}>
+           <td>{{forloop.counter}} </td>
+           <td>{{val.department}} </td>
+           <td>{{val.employee}} </td>
+           <td>{{val.startdate }} </td>
+           <td>{{val.enddate}} </td>
+        </tr>
+        {%endfor%}
+
+
+      </tbody>
+    </table>
+       
+
+  </div>
+</div>
+</div>
+ 	<script>
+          $(document).ready(function() {
+            $('#example').DataTable( {
+                  "dom": '<"toolbar">frtp',
+                  "pageLength": 10
+                });
+ 
+            $("div.toolbar").html('<h4>OnCall List In 24h:</h4>');});
+      </script>
+       <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+      <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css"> 
+{%endblock%} 

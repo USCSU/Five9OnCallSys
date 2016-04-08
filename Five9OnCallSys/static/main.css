@@ -25,3 +25,31 @@ span {
     color:#6A5ACD;
   	border-radius:2;
 }
+/*purple*/
+.table tbody tr.DB {
+  background-color: #fff2cc;
+}
+
+/*green*/
+.table tbody tr.SYS {
+  background-color: #ccccff;
+}
+
+.table tbody tr.IT_Service_Desk {
+  background-color: #ffcccc;
+}
+
+.table tbody tr.INFOSYS {
+  background-color: #ccffcc;
+}
+.table tbody tr.Data_Center {
+  background-color: #ccffff;
+}
+
+.table tbody tr.Network {
+  background-color: #ffccee;
+}
+
+.table tbody tr.NOC {
+  background-color: #e6e6e6;
+}
