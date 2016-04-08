@@ -64,6 +64,7 @@ def send_email(user, pwd, recipient, subject, body):
     """ % (FROM, ", ".join(TO), SUBJECT, TEXT)
     try:
         server = smtplib.SMTP("smtp.gmail.com", 587)
+        # server = smtplib.SMTP("intranetdev001.scl.five9.com", 25)
         server.ehlo()
         server.starttls()
         server.login(gmail_user, gmail_pwd)
@@ -128,6 +129,7 @@ def addTicket(request):
 			#email sent
 			if bool(oncallList):
 				send_email("chris.sufive9@gmail.com", "Five9ossqa",list(oncallList), " Outrage bridge#:925-201-2000", "Outage/Service Alert #: "+ticket) 
+				# send_email("@five9.com", "Five9ossqa",list(oncallList), " Outrage bridge#:925-201-2000", "Outage/Service Alert #: "+ticket) 
 			if bool(escalateList):	
 				send_email("chris.sufive9@gmail.com", "Five9ossqa",list(escalateList), "Outrage bridge#:925-201-2000", "Outage/Service Alert #:"+ticket) 
 			
@@ -195,10 +197,10 @@ def checkSME(request):
 		return HttpResponseRedirect('/noc/login/')
 	return render(request,'noc/checkSME.html',{'logs':json.dumps(dutylistFormat(),default = json_serial)});
 
-def getOnDutyByDeparment(nameOfDepart,next24):
+def getOnDutyByDeparment(nameOfDepart,next24,current):
 	log = []
 
-	ondutyobjs  = onDuty.objects.filter(department__name=nameOfDepart).filter(endDate__gte = next24).filter(startDate__lte=next24)
+	ondutyobjs  = onDuty.objects.filter(department__name=nameOfDepart).exclude(endDate__lte = current).exclude(startDate__gte=next24)
 	for item in ondutyobjs:
 		row = {}
 		empid = item.employee_id
@@ -215,11 +217,12 @@ def checkSMETable(request):
 	if not isAuth(request,'nocops'):
 		return HttpResponseRedirect('/noc/login/')
 	next24 = getNext24PST() # next 24 hour end time
+	current = getcurrentPST()
 	departlist = [item['name'] for item in department.objects.values('name')]
 	print departlist
 	logs = []
 	for depart in departlist:
-	 	temp = getOnDutyByDeparment(depart,next24)
+	 	temp = getOnDutyByDeparment(depart,next24,current)
 	 	if temp:
 			logs.extend(temp)
 	print "!@#$!@#%@#&#%$"

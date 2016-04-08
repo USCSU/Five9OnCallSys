@@ -28,7 +28,7 @@ def logSave(name,person,start,end):
 def onDutySave(departName,start,end,id):
 	depart =  department.objects.get(name = departName)
 	emp= employee.objects.get(employeeid =id)
- 	duty = onDuty(department = depart,startDate = datetime.strptime(start, "%m/%d/%Y %H:%M %p"),endDate= datetime.strptime(end, "%m/%d/%Y %H:%M %p"), employee= emp )
+ 	duty = onDuty(department = depart,startDate = datetime.strptime(start, "%Y/%m/%d %H:%M %p"),endDate= datetime.strptime(end, "%Y/%m/%d %H:%M %p"), employee= emp )
  	duty.save()
 
 def logFormat1(opLog):
@@ -61,7 +61,6 @@ def logformat(opLog):
 		row['startdate'] = singlelog.startDate
 		row['enddate'] = singlelog.endDate
 		logs.append(row)
-	print logs
 	return logs
 
 def index(request,name):
@@ -127,8 +126,10 @@ def updateSchedule(request,team):
 	if request.method=='POST':
 		start= request.POST.get('startdate')
 		end =request.POST.get('enddate')
-		user = request.POST.get('user')
 		logid = request.POST.get('log_id')
+		user = onDuty.objects.filter(id=logid)[0].employee
+		# user = request.POST.get('user')
+
 		onDuty.objects.filter(id=logid).update(startDate = parser.parse(start).strftime("%Y-%m-%d %H:%M"), endDate = parser.parse(end).strftime("%Y-%m-%d %H:%M"), employee_id = user)
 
 		return HttpResponseRedirect(reverse('managerschdule', args=[team]))

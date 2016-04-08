@@ -141,18 +141,15 @@
                                                     </thead>
                                                       <tr>
                                                         <td> 
-                                                              <select name = "user" class="form-control" id = "select1">
-                                                             {%for item in emp%}
-                                                             <option value ={{item.employeeid}}>{{item}}</option>
-                                                             {%endfor%}
-                                                             </select>
+                                                              <label name = "username" class="form-control" id = "empName">loading</label>
                                                        </td>
                                                         <td>
                                                               <input type = "text" name = "startdate" id = "datetimepicker3" placeholder="01/01/2016" class = "form-control" />
                                                         </td>
                                                         <td> 
                                                               <input type = "text" name = "enddate" id = "datetimepicker4" placeholder="01/01/2016" class = "form-control"/> 
-                                                              <input type = "text" name = "log_id" id = "log_id"   class = "form-control hidden"/> 
+                                                              <input type = "text" name = "log_id" id = "log_id"   class = "form-control hidden"/>
+                                                             
                                                         </td>
                                                       </tr>
                                       </table>
@@ -221,11 +218,12 @@
           // var name = $("#name"+index).html();
           var start= $("#start"+index).html();
           var end = $("#end"+index).html();
- 
+          var empName = $("#name"+index).html();
           $("#datetimepicker3").attr("placeholder",start);
           $("#datetimepicker3").val(start);
           $("#datetimepicker4").attr("placeholder",end);
           $("#datetimepicker4").val(end);
+          $("#empName").text(empName);
           $("#log_id").val(index);
         });
         $('.delete_row').on('click', function (e) {
@@ -237,10 +235,12 @@
       <script type="text/javascript">
       $(function () {
         $('#datetimepicker1').datetimepicker({
+          format: 'YYYY/MM/DD hh:mm A',
           minDate:new Date(),
         });
         $('#datetimepicker2').datetimepicker({
-            minDate:new Date(),
+          format: 'YYYY/MM/DD hh:mm A',
+          minDate:new Date(),
         });
         $("#datetimepicker1").on("dp.change", function (e) {
             $('#datetimepicker2').data("DateTimePicker").minDate(e.date);
@@ -251,9 +251,11 @@
 
 
         $('#datetimepicker3').datetimepicker({
+          format: 'YYYY/MM/DD hh:mm A',
           minDate:new Date(),
         });
         $('#datetimepicker4').datetimepicker({
+            format: 'YYYY/MM/DD hh:mm A',
             minDate:new Date(),
         });
         $("#datetimepicker3").on("dp.change", function (e) {
