@@ -26,12 +26,12 @@ span {
   	border-radius:2;
 }
 /*purple*/
-.table tbody tr.DB {
+.table tbody tr.Database_Team {
   background-color: #fff2cc;
 }
 
 /*green*/
-.table tbody tr.SYS {
+.table tbody tr.Systems_Team {
   background-color: #ccccff;
 }
 
@@ -39,17 +39,20 @@ span {
   background-color: #ffcccc;
 }
 
-.table tbody tr.INFOSYS {
+.table tbody tr.InfoSec {
   background-color: #ccffcc;
 }
 .table tbody tr.Data_Center {
   background-color: #ccffff;
 }
 
-.table tbody tr.Network {
+.table tbody tr.Network_Team {
   background-color: #ffccee;
 }
 
 .table tbody tr.NOC {
   background-color: #e6e6e6;
 }
+.table tbody tr.PSTN_Team {
+  background-color: #eeeedd;
+}s
