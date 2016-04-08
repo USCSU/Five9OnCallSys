@@ -162,18 +162,20 @@ def filterDepartmentName(team):
 	result = ""
 	if 'IT' in team:
 		result = 'IT' 
-	if 'INFO' in team:
+	if 'Info' in team:
 		result = 'INFO' 
 	if 'Center' in team:
 		result = 'DCNTER' 
-	if 'SYS' in team:
+	if 'Sys'  in team:
 		result = 'SYS' 
 	if 'Network' in team:
 		result = 'Network' 
 	if 'NOC' in team:
 		result = 'NOC' 
-	if 'DB' in team:
+	if 'Data' in team:
 		result = 'DB' 
+	if 'PSTN' in team:
+		result = 'PSTN'
 	
 	return result
 '''format the query from database; list is db query set'''
