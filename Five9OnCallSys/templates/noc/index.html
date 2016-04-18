@@ -1,78 +1,101 @@
 {%extends "base.html"%}
 {%block content%}
-
-
-
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-        <br><br>
-          <ul class="nav nav-sidebar">
-           
+<div class="container-fluid">
+   <div class="row">
+      <div class="col-sm-3 col-md-2 sidebar">
+         <br><br>
+         <ul class="nav nav-sidebar">
             <!-- <li><a href="{%url 'nocaddticket'%}">Add Ticket</a></li> -->
             <br>
             <br>
-
             <li><a href="{%url 'nocaddticket'%}">Call SME</a></li>
-            <li><a href="{%url 'nocsme'%}">Check SME Calendar</a></li>
-            <li><a href="{%url 'nocsmetable'%}">Check SME Table</a></li>
-          </ul>
-        </div>
-
-        <div class="col-sm-9   col-md-offset-2">
-          <!-- <h3 class="sub-header">Operation History</h3> -->
-          <div class="table-responsive">
-           
-            <table class="table table-striped" id="example">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>TimeStamp</th>
-                  <th>Ticket #</th>
-                  <th>Level</th>
-                  <th>Teams</th>
-                </tr>
-              </thead>
-              <tfoot>
-                <tr>
-                  <th>#</th>
-                  <th>TimeStamp</th>
-                  <th>Ticket #</th>
-                  <th>Level</th>
-                  <th>Teams</th>
-                </tr>
-              </tfoot>
-              <tbody>
-               
-              {%for  val in log%}
-                <tr >
-                  <td>{{forloop.counter}}</td>
-                  <td>{{val|slice:'1'|join:""}}</td>
-                  <td>{{val|slice:'1:2'|join:""}}</td>
-                  <td>{{val|slice:'2:3'|join:""}}</td>
-                  <td>{{val|slice:'3:4'|join:""}}</td>
-                </tr>
-                {%endfor%}
-                
-                
-              </tbody>
-            </table>
-            
-          </div>
-        </div>
+            <li><a href="{%url 'nocsme'%}">SME Calendar</a></li>
+            <li><a href="{%url 'nocsmetable'%}">SME Table</a></li>
+            <li>
+               <a href="#"  class = "confirm-delete" id = "new" role="button"  data-toggle="modal" data-target="#updateBridge">Set Bridge#</a>
+            </li>
+         </ul>
       </div>
-    </div>
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    	<script>
-    			$(document).ready(function() {
-    				$('#example').DataTable( {
-        					"dom": '<"toolbar">frtip'});
- 
-    				$("div.toolbar").html('<h4>Operation History</h4>');});
-			</script>
-       <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
-      <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css"> 
-{%endblock%} 
+      <br><br><br><br><br><br><br><br>
+      <div class="col-sm-8   ">
+         <!-- <h3 class="sub-header">Operation History</h3> -->
+         <div class="table-responsive">
+            <table class="table table-striped" id="example">
+               <thead>
+                  <tr>
+                     <th>#</th>
+                     <th>TimeStamp</th>
+                     <th>Ticket #</th>
+                     <th>Bridge #</th>
+                     <th>Level</th>
+                     <th>Teams</th>
+                     <th>Operator</th>
+                  </tr>
+               </thead>
+               <tfoot>
+                  <tr>
+                     <th>#</th>
+                     <th>TimeStamp</th>
+                     <th>Ticket #</th>
+                     <th>Bridge #</th>
+                     <th>Level</th>
+                     <th>Teams</th>
+                     <th>Operator</th>
+                  </tr>
+               </tfoot>
+               <tbody>
+                  {%for  val in log%}
+                  <tr >
+                     <td>{{forloop.counter}}</td>
+                     <td>{{val|slice:'1'|join:""}}</td>
+                     <td>{{val|slice:'1:2'|join:""}}</td>
+                     <td>{{val|slice:'2:3'|join:""}}</td>
+                     <td>{{val|slice:'3:4'|join:""}}</td>
+                     <td>{{val|slice:'4:5'|join:""}}</td>
+                     <td>{{val|slice:'5:6'|join:""}}</td>
+                  </tr>
+                  {%endfor%}
+               </tbody>
+            </table>
+         </div>
+      </div>
+   </div>
+</div>
+<div class="modal fade" id="updateBridge" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+<div class="modal-dialog modal-sm">
+   <!-- modal content -->
+   <div class="modal-content">
+      <div class="modal-header">
+         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+         <h4 class="modal-title" id="myModalLabel">Set Bridge#</h4>
+      </div>
+    
+       <form action = "{%url 'setbridge'%}" method = "post"> <!-- send to Django view  -->
+         <!-- send to Django view  -->
+         <div class="modal-body">
+            {%csrf_token%}
+            <div  class="input-group col-xs-10  col-md-offset-1 " >
+               
+               <input type="text" class="form-control" name="bridge" id = "bridge" placeholder="{{number}}" value="{{number}}" /> 
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+               <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+       </form>
+      </div>
+   </div>
+</div>
+<!-- Bootstrap core JavaScript
+   ================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script>
+   $(document).ready(function() {
+    $('#example').DataTable( {
+              "dom": '<"toolbar">frtip'});
+   
+    $("div.toolbar").html('<h4>Operation History</h4>');});
+</script>
+<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">
+{%endblock%}

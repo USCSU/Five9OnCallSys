@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.http import HttpResponse,HttpResponseRedirect
 from manager.models import department,employee,onDuty
 from noc.forms import NocOpsForm
-from noc.models import log
+from noc.models import log,bridge
 from datetime import datetime
 from sets import Set
 from django.contrib.auth.decorators import login_required
@@ -14,7 +14,7 @@ from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from pytz import timezone
 from dateutil import parser
-
+from django.core.urlresolvers import reverse
 def json_serial(obj):
     """JSON serializer for objects not serializable by default json code"""
 
@@ -44,18 +44,21 @@ def logFormat():
 		temp = []
 		temp.append(singlelog.datetime)
 		temp.append(singlelog.ticketnumber)
-		departlist=""
-		for item in singlelog.departments:
-			departlist+=item
+		temp.append(singlelog.bridge)
+		lists=json.decoder.JSONDecoder().decode(singlelog.departments)
+		departlist =[]
+		for item in lists:
+			departlist.append(filterDepartmentName(item)) #need to improve
 		temp.append("Logged") if not singlelog.escalate else temp.append("Escalted");
 		temp.append(departlist)
+		temp.append(singlelog.nocEmp)
 		logs.append(temp)
 	return logs#,listOfDepartments
 
-def send_email(user, pwd, recipient, subject, body):
+def send_email(user, pwd, sender,recipient, subject, body):
     gmail_user = user
     gmail_pwd = pwd
-    FROM = user
+    FROM = sender
     TO = recipient if type(recipient) is list else [recipient]
     SUBJECT = subject
     TEXT = body
@@ -63,22 +66,24 @@ def send_email(user, pwd, recipient, subject, body):
     message = """\From: %s\nTo: %s\nSubject: %s\n\n%s
     """ % (FROM, ", ".join(TO), SUBJECT, TEXT)
     try:
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        # server = smtplib.SMTP("intranetdev001.scl.five9.com", 25)
+        # server = smtplib.SMTP("smtp.gmail.com", 587)
+        server = smtplib.SMTP("webmail.five9.com", 587)
         server.ehlo()
         server.starttls()
         server.login(gmail_user, gmail_pwd)
         server.sendmail(FROM, TO, message)
         server.close()
         print 'successfully sent the mail'
-    except:
-        print "failed to send mail"
+    # except:
+    #     print "failed to send mail"
+    except BaseException as e:
+	    print 'Failed to send email: ' + str(e)
 
 '''
 this function is mainly to retrieve manager's name  with input from form submission
 '''
 def getManager(depart_name): 
-	managerItem = (employee.objects.filter(department__name = depart_name) & employee.objects.filter(manager='true'))[0]
+	managerItem = (employee.objects.filter(department__name = depart_name).filter(manager='true'))[0]
 	return managerItem
 
 def getManagers(listOfDepartments):
@@ -119,44 +124,62 @@ def addTicket(request):
 		form = NocOpsForm(request.POST)
 		escalate = [str(x) for x in request.POST.getlist('escalate')]
 		departlist = [str(x) for x in request.POST.getlist('depart')]
-		print escalate
-		print departlist
-		if form.is_valid() or not escalate and not departlist:
+		superescalate = [str(x) for x in request.POST.getlist('superescalate')]
+ 
+		if form.is_valid() or not escalate and not departlist and not superescalate:
 			#receive request's paramter from html
 			escalateList =  Set(getManagers(escalate))
+			superescalateList =  Set(getManagers(superescalate))
+			print superescalate
 			oncallList = Set(getOnCallEmployees(departlist))
+			bridgeNumber = request.POST.get('bridge')
+			print "0-0-0-0-0-0"
+			print bridgeNumber
 			ticket = form.cleaned_data['Ticket']#list(oncallList)
+			subject = request.POST.get('subject')
+
 			#email sent
 			if bool(oncallList):
-				send_email("chris.sufive9@gmail.com", "Five9ossqa",list(oncallList), " Outrage bridge#:925-201-2000", "Outage/Service Alert #: "+ticket) 
-				# send_email("@five9.com", "Five9ossqa",list(oncallList), " Outrage bridge#:925-201-2000", "Outage/Service Alert #: "+ticket) 
+				# send_email("chris.sufive9@gmail.com", "Five9ossqa",list(oncallList), subject," Outrage bridge#:"+ bridgeNumber+"\nOutage/Service Alert #: "+ticket) 
+				send_email("NocTextAlert@five9.com", "Five9321!",'NocTextAlert@five9.com',list(oncallList), subject," Outrage bridge#:"+ bridgeNumber+"\nOutage/Service Alert #: "+ticket) 
 			if bool(escalateList):	
-				send_email("chris.sufive9@gmail.com", "Five9ossqa",list(escalateList), "Outrage bridge#:925-201-2000", "Outage/Service Alert #:"+ticket) 
+				send_email("NocTextAlert@five9.com", "Five9321!",'NocTextAlert@five9.com',list(escalateList), subject," Outrage bridge#:"+ bridgeNumber+"\nOutage/Service Alert #: "+ticket)
 			
+			if bool(superescalateList):
+				send_email("NocTextAlert@five9.com", "Five9321!",'NocTextAlert@five9.com',list(superescalateList), subject," Outrage bridge#:"+ bridgeNumber+"\nOutage/Service Alert #: "+ticket)
 			#update log of Noc operation
-			print "---"
-			print oncallList 
-			print "+++"
-			print escalateList
+			 
 			if bool(oncallList):
-				record = log(datetime = getcurrentPST(), ticketnumber = ticket, oncallUser = list(oncallList) , departments = list(departlist),escalate = False)
+				record = log(datetime = getcurrentPST(), ticketnumber = ticket, oncallUser = list(oncallList) , departments = json.dumps(departlist),escalate = False, bridge = bridgeNumber, management = json.dumps(superescalate), nocEmp = request.user)
 				record.save()
 			if bool(escalateList):	
-				record = log(datetime = getcurrentPST(), ticketnumber = ticket, oncallUser = list(escalateList) , departments = list(escalate),escalate = True)
+				record = log(datetime = getcurrentPST(), ticketnumber = ticket, oncallUser = list(escalateList) , departments = json.dumps(escalate),escalate = True, bridge = bridgeNumber, management = json.dumps(superescalate),nocEmp = request.user)
 				record.save()
 			return HttpResponseRedirect('/noc');
 		else:
 			return render(request,'noc/no_data.html');
 	else:
 		form = NocOpsForm()
-		listOfDepartments = department.objects.all()
-	return render(request,'noc/addTicket.html',{'form':form,  'listOfDepartments':listOfDepartments})
+		listOfDepartments = department.objects.filter(highRank =0)
+		listOfSuperDepartments = department.objects.filter(highRank = 1)
+		bridgeSet = bridge.objects.all()
+		if bridgeSet:
+			oldNumber = bridge.objects.all()[:1][0].number	
+		else:
+			oldNumber =''
+		
+	return render(request,'noc/addTicket.html',{'form':form,  'listOfDepartments':listOfDepartments,'listOfSuperDepartments':listOfSuperDepartments,'number':oldNumber})
 def index(request):
 	if not isAuth(request,'nocops'):
 		return HttpResponseRedirect('/noc/login/')
-	
+	bridgeSet = bridge.objects.all()
+	if bridgeSet:
+		oldNumber = bridge.objects.all()[:1][0].number	
+	else:
+		oldNumber =''
+
 	logs = logFormat()
-	return render(request,'noc/index.html',{ 'log':logs})
+	return render(request,'noc/index.html',{ 'log':logs,'number':oldNumber})
 
 def filterDepartmentName(team):
 	result = ""
@@ -221,13 +244,47 @@ def checkSMETable(request):
 	next24 = getNext24PST() # next 24 hour end time
 	current = getcurrentPST()
 	departlist = [item['name'] for item in department.objects.values('name')]
-	print departlist
 	logs = []
 	for depart in departlist:
 	 	temp = getOnDutyByDeparment(depart,next24,current)
 	 	if temp:
 			logs.extend(temp)
-	print "!@#$!@#%@#&#%$"
-	print logs
 	return render(request,'noc/checkSMETable.html',{'logs':logs});
-
+def setBridge(request):
+	#avoid cross visit
+	if not isAuth(request,'nocops'):
+		return HttpResponseRedirect('/')
+	if request.method == 'POST':
+		#take request from html page
+		bridgeNum= request.POST.get('bridge')
+		bridgeSet = bridge.objects.all()
+		# //if no data in db ,insert
+		if not bridgeSet:
+			item = bridge(number = bridgeNum)
+			item.save()
+		# orelse, update 
+		else:
+			oldNumber = bridge.objects.all()[:1][0].number
+			bridge.objects.filter(number=oldNumber).update(number = bridgeNum)
+		return HttpResponseRedirect(reverse('nocindex'))
+	else:#get method
+		 return HttpResponse("Wrong way,Turn back")
+def setBridgeTicket(request):
+	#avoid cross visit
+	if not isAuth(request,'nocops'):
+		return HttpResponseRedirect('/')
+	if request.method == 'POST':
+		#take request from html page
+		bridgeNum= request.POST.get('bridge')
+		bridgeSet = bridge.objects.all()
+		# //if no data in db ,insert
+		if not bridgeSet:
+			item = bridge(number = bridgeNum)
+			item.save()
+		# orelse, update 
+		else:
+			oldNumber = bridge.objects.all()[:1][0].number
+			bridge.objects.filter(number=oldNumber).update(number = bridgeNum)
+		return HttpResponseRedirect(reverse('nocaddticket'))
+	else:#get method
+		 return HttpResponse("Wrong way,Turn back")

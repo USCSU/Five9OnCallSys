@@ -1,94 +1,24 @@
-{%extends "base.html"%}
+{%extends "base.html"%} 
 {%block content%}
-<br><br><br>
-<link rel="stylesheet" type="text/css" href="/static/main.css">
-  <div class="col-sm-9   col-md-offset-2">
-          <!-- <h3 class="sub-header">Operation History</h3> -->
-          <div class="table-responsive">
-                      <table class="table  table-bordered table-hover" width="744" id="example">
-                      <thead>
-                      <tr>
-                      <th>#</th>
-                      <th>Column heading</th>
-                      <th>Column heading</th>
-                      <th>Column heading</th>
-                      <th>Column heading</th>
-                      </tr>
-                      </thead>
-                       <tfoot> 
-                      <tr>
-                      <th>#</th>
-                      <th>Column heading</th>
-                      <th>Column heading</th>
-                      <th>Column heading</th>
-                      <th>Column heading</th>
-                      </tr>
-                      </tfoot>
-                      <tbody>
-                      <tr class = "a">
-                      <td>1</td>
-                      <td>Column content</td>
-                      <td>Column content</td>
-                      <td>Column content</td>
-                      <td>Column content</td>
-                      </tr>
-                      <tr class = "b">
-                      <td>2</td>
-                      <td>Column content</td>
-                      <td>Column content</td>
-                      <td>Column content</td>
-                      <td>Column content</td>
-                      </tr>
-                     
-                      <tr class="c">
-                      <td>4</td>
-                      <td>success</td>
-                      <td>Column content</td>
-                      <td>Column content</td>
-                      <td>Column content</td>
-                      </tr>
-                      <tr class="danger">
-                      <td>5</td>
-                      <td>danger Row</td>
-                      <td>Column content</td>
-                      <td>Column content</td>
-                      <td>Column content</td>
-                      </tr>
-                      <tr class="warning">
-                      <td>6</td>
-                      <td>warning row</td>
-                      <td>Column content</td>
-                      <td>Column content</td>
-                      <td>Column content</td>
-                      </tr>
-                      <tr class="info">
-                      <td>7</td>
-                      <td>info row</td>
-                      <td>Column content</td>
-                      <td>Column content</td>
-                      <td>Column content</td>
-                      </tr>
-                      <tr class = "active">
-                      <td>8</td>
-                      <td>Column content</td>
-                      <td>Column content</td>
-                      <td>Column content</td>
-                      <td>Column content</td>
-                      </tr>
-                       
-                      </tbody>
-                      </table>
-        </div>
+<br><br><br><br><br><br>
+<div style="float: left;display: inline-block" >
+                <div style="float: left" class="input-group col-xs-2">
+                <label>Outage/Service Alert number</label>
+                  <!-- <div class="input-group-addon"> #</div> -->
+                  <input type="text" class="form-control" name="Ticket" id = "ticket" /> <span id = "error_msg" class=" text-danger"></span>
+                </div>
+                <div style="float: right" class="input-group col-xs-5">
+                <label>Bridge#</label>
+                  <!-- <div class="input-group-addon"> #</div> -->
+                <input type="text" class="form-control" name="Bridge" id = "bridge" /> <span id = "error_bridge" class=" text-danger"></span>
+                </div>
 </div>
- <script>
-          $(document).ready(function() {
-            $('#example').DataTable( {
-                  "dom": '<"toolbar">frtp',
-                  "pageLength": 10
-                });
- 
-            $("div.toolbar").html('<h4>Operation History</h4>');});
-      </script>
-       <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
-      <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css"> 
+<div style="float: bottom" >
+                <div style="float: bottom" class="input-group col-xs-5">
+                <label>Subject</label>
+                  <!-- <div class="input-group-addon"> #</div> -->
+            <input type="text" class="form-control" name="Subject" id = "subject" /> <span id = "error_subject" class=" text-danger"></span>
+                </div>
+</div>
+              </div>
 {%endblock%} 

@@ -31,18 +31,7 @@ def onDutySave(departName,start,end,id):
  	duty = onDuty(department = depart,startDate = datetime.strptime(start, "%Y/%m/%d %H:%M %p"),endDate= datetime.strptime(end, "%Y/%m/%d %H:%M %p"), employee= emp )
  	duty.save()
 
-def logFormat1(opLog):
-	logs = []
-	logs.append('{:<10}  {:<9} {:<10} {:<10}'.format('FirstName:', 'LastName:','','Schedule:'))
-
-	for singlelog in opLog:
-		worker = singlelog.employee 
-		workername = '{:<10}  {:<9} '.format(worker.firstName, worker.lastName)
-		content = workername +" will be on scheudle from " + str(singlelog.startDate) + " to " +str(singlelog.endDate)
-		logs.append(content)
-	if not logs:
-		logs.append("No schedule for your team yet")
-	return logs
+ 
 
 def json_serial(obj):
     """JSON serializer for objects not serializable by default json code"""
@@ -113,9 +102,6 @@ def addSchedule(request,team):
 	else:#get method
 		emp = employee.objects.filter(department__name =team)
 		opLog = onDuty.objects.filter(department__name = team).order_by('-endDate')
-
-
-
 		return render(request,'manager/setschedule.html',{'emp':emp,'team':team, 'log':logformat(opLog),'logs':json.dumps(logformat(opLog),default = json_serial)})
 def updateSchedule(request,team):
 	if not isAuth(request,'managerops'):

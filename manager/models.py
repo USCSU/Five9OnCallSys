@@ -2,6 +2,7 @@ from django.db import models
 class department(models.Model):
 	name = models.CharField(max_length=50) 
 	departmentid = models.IntegerField(primary_key = True)
+	highRank = models.BooleanField()
 	def __unicode__(self):
 		return self.name
 class employee(models.Model):

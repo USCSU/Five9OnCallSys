@@ -21,6 +21,8 @@ urlpatterns = [
 
 	url(r'^noc/SME_Calendar$', noc.checkSME,name ='nocsme'),
 	url(r'^noc/SME_Table$', noc.checkSMETable,name ='nocsmetable'),
+	url(r'^noc/setBridge$', noc.setBridge,name ='setbridge'),
+	url(r'^noc/setBridgeTicket$', noc.setBridgeTicket,name ='setbridgeticket'),
 
     url(r'^logout/$','django.contrib.auth.views.logout',{'next_page': '/'}),
     

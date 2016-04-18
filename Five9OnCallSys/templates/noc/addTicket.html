@@ -1,4 +1,5 @@
 {%extends "base.html"%}
+{% load customfilter %}
 {%block content%}
  
     <div class="container-fluid">
@@ -11,7 +12,9 @@
             <br>
             <br>
             <li><a href="{%url 'nocindex' %}">Back</a></li>
-            <li><a href="#">Bug Report</a></li>
+            <li>
+            <a href="#"  class = "confirm-delete" id = "new" role="button"  data-toggle="modal" data-target="#updateBridge">Set Bridge#</a>
+            </li>
           </ul>
         </div>
 
@@ -21,33 +24,75 @@
           	{%csrf_token%}
 
             <div class = "container col-sm-9   col-md-offset-2">
-              <div class="form-group border">
-                <label>Outage/Service Alert number:</label>
-                <div class="input-group col-xs-5">
-                  <!-- <div class="input-group-addon"> #</div> -->
-                  <input type="text" class="form-control" name="Ticket" id = "ticket" /> <span id = "error_msg" class=" text-danger"></span>
-                </div>
+              
+              <div  class="form-group border span4 row">
+                             <div  class="form-group col-xs-5 col-md-4 row">
+                                    <label>Outage/Service Alert number</label>
+                                    <!-- <div class="input-group-addon"> #</div> -->
+                                    <input type="text" class="form-control " name="Ticket" id = "ticket" /> 
+                                    <span id = "error_msg" class=" text-danger error_tool"></span>
+                                  <br>
+                                   <label>Subject</label>
+                                    <textarea  class="form-control" name="subject" id = "subject" rows = "3"> </textarea>
+                                    <span id = "error_subject" class=" text-danger"></span>
+                                    <span id = "error_subject_info" class=" text-info"></span>
+                                    
+                              </div>
+
+                              <div  class="input-group col-xs-5  col-md-offset-6 row" >
+                                   <label>Bridge#</label>
+                                    <input type="text" class="form-control  " name="bridge" id = "bridge" value="{{number}}" placeholder="{{number}}" /> 
+                                    <br>
+                                    <span id = "error_bridge" class=" text-danger error_tool" ></span>
+                              </div>
+                              
+
+              
+
               </div>
 
-              <div class="form-group border">
+              <div   class="form-group border row">
                 <div class="row">
                   <div class="col-xs-4">
-                    <label>OnCall</label>
+                    <label>SME</label>
+                    <div class = "checkbox">
+                    <label><input type="checkbox" name="depart"  id ="select_all1" /> All</label>
+                    </div>
                     {%for item in listOfDepartments%}
                     <div class="checkbox">
-                      <label><input type="checkbox" name="depart" value={{item.name}} class="oncall" /> {{item.name}}</label>
+                      <label><input type="checkbox" name="depart" value={{item.name }} class="oncall" /> {{item.name}}</label>
                     </div>
                     {%endfor%}
+                    
                     <span id = "error_oncall" class=" text-info"></span>
                   </div>
 
                   <div class="col-xs-4">
-                    <label>Escalate</label>
+                    <label>Manager</label>
+                    <div class = "checkbox">
+                    <label><input type="checkbox" name="depart"  id ="select_all2" /> All</label>
+                    </div>
                     {%for item in listOfDepartments%}
                     <div class="checkbox" >
                       <label><input type="checkbox" name="escalate" value={{item.name}}  class="escalate" /> {{item.name}}</label>
                     </div>
                     {%endfor%}
+                    
+                    <span id = "error_escalate" class=" text-info"></span>
+                  </div>
+
+                   <div class="col-xs-4">
+                    <label>Management</label>
+                    <div class = "checkbox">
+                    <label><input type="checkbox" name="depart"  id ="select_all3" /> All</label>
+                    </div>
+                    {%for item in listOfSuperDepartments%}
+                    <div class="checkbox" >
+                      <label><input type="checkbox" name="superescalate" value={{item.name}}  class="management" checked/> {{item.name}}</label>
+                    </div>
+                    {%endfor%}
+                    
+                     
                     <span id = "error_escalate" class=" text-info"></span>
                   </div>
                 </div>
@@ -83,6 +128,10 @@
                               <td>Escalated</td>
                               <td id = 'teamtable2' class="text-left"></td>
                             </tr>
+                            <tr>
+                              <td>Management</td>
+                              <td id = 'teamtable3' class="text-left"></td>
+                            </tr>
                           </tbody>
                         </table>
                         <div class="modal-footer">
@@ -94,51 +143,162 @@
                   </div>
                 </form>
               </div>
+
+          <div class="modal fade" id="updateBridge" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+          <div class="modal-dialog modal-sm">
+             <!-- modal content -->
+             <div class="modal-content">
+                <div class="modal-header">
+                   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                   <h4 class="modal-title" id="myModalLabel">Set Bridge#</h4>
+                </div>
+              
+                 <form action = "{%url 'setbridgeticket'%}" method = "post"> <!-- send to Django view  -->
+                   <!-- send to Django view  -->
+                   <div class="modal-body">
+                      {%csrf_token%}
+                      <div  class="input-group col-xs-10  col-md-offset-1 " >
+                         
+                         <input type="text" class="form-control" name="bridge" id = "bridge" placeholder="{{number}}" value ="{{number}}"/> 
+                      </div>
+                      <div class="modal-footer">
+                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                         <button type="submit" class="btn btn-primary">Submit</button>
+                      </div>
+                 </form>
+                </div>
+             </div>
+          </div>
+
           <script type="text/javascript">
+          var ticket = false;
+          var bridge = true;
+          var subject = true;
                $('#submit').addClass('disabled');
-               $('#error_msg').html("<p >Ticket # can't be empty</p>");
+               $('#error_msg').html("<p >Outrage# can't be empty</p>");
+               $('#error_subject_info').html("<p >size is limited to 25 characters</p>");
+               // $('#error_bridge').html("<p >Bridge# can't be empty</p>");
                // $('#error_oncall').html("<p> choose on_call and/or Escalated team");
                // $('#error_escalate').html("<p> Please choose Escalate team");
-                $('#ticketform input').blur(function()          //whenever you click off an input element
+                $('#bridge').blur(function()          //whenever you click off an input element
                 {   
-                  var content = $.trim($(this).val())  
+                  var content = $.trim($(this).val());  
                         if( ! content) {                      //if it is blank. 
-                          $('#error_msg').html("<p >Ticket # can't be empty</p>");
+                          $('#error_bridge').html("<p >Bridge# can't be empty</p>");
                           $('#submit').addClass('disabled');
+                          bridge = false;
                         } 
                         else if(!$.isNumeric(content)){
-                          $('#error_msg').html("<p >Integer needed for Ticket #</p>");
+                          $('#error_bridge').html("<p>Integer needed for Bridge #</p>");
                           $('#submit').addClass('disabled');
+                          bridge = false;
                         }
                         else{
-                          $('#error_msg').html("");
-                          $('#submit').removeClass('disabled');
+                          $('#error_bridge').html("");
+                          bridge = true;
+                          // $('#submit').removeClass('disabled');
+                        }
+
+                        if(bridge&&ticket&&subject){
+                            $('#submit').removeClass('disabled');
                         }
                       });
+                $('#ticket').blur(function()          //whenever you click off an input element
+                {   
+                  var content = $.trim($(this).val());  
+                        if( ! content) {                      //if it is blank. 
+                          $('#error_msg').html("<p >Outrage# can't be empty</p>");
+                          $('#submit').addClass('disabled');
+                          ticket = false;
+                        } 
+                        else{
+                          $('#error_msg').html("");
+                          ticket = true;
+                        }
+
+                        if(bridge&&ticket&&subject){
+                            $('#submit').removeClass('disabled');
+                        }
+                      });
+                
+                $('#subject').blur(function()          //whenever you click off an input element
+                {   
+                  var content = $.trim($(this).val()); 
+                        if(  content.length>25) {                      //if it is blank. 
+                          $('#error_subject_info').html("");
+                          $('#error_subject').html("<p>size is limited to 25 characters</p>");
+                          $('#submit').addClass('disabled');
+                          subject = false;
+                        } 
+                        else{
+                          $('#error_subject_info').html("<p>size is limited to 25 characters</p>");
+                          $('#error_subject').html("");
+                          subject = true;
+                        }
+
+                        if(bridge&&ticket&&subject){
+                            $('#submit').removeClass('disabled');
+                        }
+                      });
+                
                 //bootstrap modal 
                  
                 $('#basicModal').on('show.bs.modal', function (e) {
                     $( '.modal-body #teamtable1' ).empty()
                     $( '.modal-body #teamtable2' ).empty();
+                    $( '.modal-body #teamtable3' ).empty();
                     var oncalllist = $('.oncall').serializeArray();
                     var escalatelist = $('.escalate').serializeArray();
+                    var managelist = $('.management').serializeArray();
                     if(oncalllist.length === 0){
                             $( '.modal-body #teamtable1' ).append( "<b> -<b>\t" );
                             
                     }else{
                             jQuery.each( oncalllist, function( i, field ) {
 
-                                $( '.modal-body #teamtable1' ).append( "<b>"+field.value + "<b>,\t" );
+                                $( '.modal-body #teamtable1' ).append( "<b>"+field.value.split("_")[0] + "<b>,\t" );
                             });
                     }
                     if(escalatelist.length ===0){
                             $( '.modal-body #teamtable2' ).append( "<b> -<b>\t" );
                     }else{
                             jQuery.each( escalatelist, function( i, field ) {
-                                $( '.modal-body #teamtable2' ).append( "<b>"+field.value + "</b>, \t" );
+                                $( '.modal-body #teamtable2' ).append( "<b>"+field.value.split("_")[0] + "</b>, \t" );
+                            });
+                    }
+                    if(managelist.length ===0){
+                            $( '.modal-body #teamtable3' ).append( "<b> -<b>\t" );
+                    }else{
+                            jQuery.each( managelist, function( i, field ) {
+                                $( '.modal-body #teamtable3' ).append( "<b>"+field.value.split("_")[0] + "</b>, \t" );
                             });
                     }
                     
                 });
+
+                $('#select_all1').click(function(event) {   
+                  if(this.checked) {
+                      // Iterate each checkbox
+                      $('.oncall').each(function() {
+                          this.checked = true;                        
+                      });
+                    }
+                  });
+                $('#select_all2').click(function(event) {   
+                  if(this.checked) {
+                      // Iterate each checkbox
+                      $('.escalate').each(function() {
+                          this.checked = true;                        
+                      });
+                    }
+                  });
+                $('#select_all3').click(function(event) {   
+                  if(this.checked) {
+                      // Iterate each checkbox
+                      $('.management').each(function() {
+                          this.checked = true;                        
+                      });
+                    }
+                  });
           </script>
           {%endblock%} 
