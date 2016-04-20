@@ -55,4 +55,7 @@ span {
 }
 .table tbody tr.PSTN_Team {
   background-color: #eeeedd;
-}s
+}
+.table tbody tr.Sustaining_team {
+  background-color: #ff704d;
+}

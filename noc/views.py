@@ -49,7 +49,7 @@ def logFormat():
 		departlist =[]
 		for item in lists:
 			departlist.append(filterDepartmentName(item)) #need to improve
-		temp.append("Logged") if not singlelog.escalate else temp.append("Escalted");
+		temp.append("Logged") if not singlelog.escalate else temp.append("Escalated");
 		temp.append(departlist)
 		temp.append(singlelog.nocEmp)
 		logs.append(temp)
@@ -83,13 +83,15 @@ def send_email(user, pwd, sender,recipient, subject, body):
 this function is mainly to retrieve manager's name  with input from form submission
 '''
 def getManager(depart_name): 
-	managerItem = (employee.objects.filter(department__name = depart_name).filter(manager='true'))[0]
+	managerItem = (employee.objects.filter(department__name = depart_name).filter(manager='true'))
 	return managerItem
 
 def getManagers(listOfDepartments):
 	managerList = []
 	for item in listOfDepartments:
-		managerList.append(getManager(item).phone)
+		manager = getManager(item)
+		if manager:
+			managerList.append(manager[0].phone)
 	return managerList
 '''
 This funciton is mainly to retrieve employees who will take the duty for one department
@@ -102,10 +104,12 @@ def getOnCallEmployee(depart_name):
 	print ondutylist
 	if not ondutylist: # if no employee is on duty, the ticket will be sent to corresponding manager
 		manager = employee.objects.filter(department__name=depart_name).filter(manager = True)
-		emaillist.append(manager[0].phone)
+		if manager:
+			emaillist.append(manager[0].phone)
 	else:
 		for item in ondutylist:
-			emaillist.append(item.employee.phone)
+			if item:
+				emaillist.append(item.employee.phone)
 
 	return emaillist
 '''
@@ -125,19 +129,22 @@ def addTicket(request):
 		escalate = [str(x) for x in request.POST.getlist('escalate')]
 		departlist = [str(x) for x in request.POST.getlist('depart')]
 		superescalate = [str(x) for x in request.POST.getlist('superescalate')]
- 
+ 		 
 		if form.is_valid() or not escalate and not departlist and not superescalate:
 			#receive request's paramter from html
 			escalateList =  Set(getManagers(escalate))
 			superescalateList =  Set(getManagers(superescalate))
-			print superescalate
 			oncallList = Set(getOnCallEmployees(departlist))
 			bridgeNumber = request.POST.get('bridge')
-			print "0-0-0-0-0-0"
-			print bridgeNumber
+			 
+			print escalateList
+			print superescalateList
+			print oncallList
+
 			ticket = form.cleaned_data['Ticket']#list(oncallList)
 			subject = request.POST.get('subject')
 
+			 
 			#email sent
 			if bool(oncallList):
 				# send_email("chris.sufive9@gmail.com", "Five9ossqa",list(oncallList), subject," Outrage bridge#:"+ bridgeNumber+"\nOutage/Service Alert #: "+ticket) 
@@ -160,15 +167,31 @@ def addTicket(request):
 			return render(request,'noc/no_data.html');
 	else:
 		form = NocOpsForm()
-		listOfDepartments = department.objects.filter(highRank =0)
-		listOfSuperDepartments = department.objects.filter(highRank = 1)
+		alldepartment = department.objects.filter(highRank =0)
+		allsuperdepartment = department.objects.filter(highRank = 1)
+		listOfDepartments,departNoExist = getNoEmpList(alldepartment)
+		listOfSuperDepartments,superdepartNoExist=getNoEmpList(allsuperdepartment)
+
 		bridgeSet = bridge.objects.all()
 		if bridgeSet:
 			oldNumber = bridge.objects.all()[:1][0].number	
 		else:
 			oldNumber =''
-		
-	return render(request,'noc/addTicket.html',{'form':form,  'listOfDepartments':listOfDepartments,'listOfSuperDepartments':listOfSuperDepartments,'number':oldNumber})
+		print listOfDepartments
+		print departNoExist
+		print listOfSuperDepartments
+		print superdepartNoExist
+	return render(request,'noc/addTicket.html',{'form':form,  'listOfDepartments':listOfDepartments,'departNoExist':departNoExist,'superdepartNoExist':superdepartNoExist,'listOfSuperDepartments':listOfSuperDepartments,'number':oldNumber})
+def getNoEmpList(listOfDepartment):
+	exist = []
+	noexist =[]
+	for item in listOfDepartment:
+		temp = employee.objects.filter(department__name = item)
+		if temp:
+			exist.append(item)
+		else:
+			noexist.append(item)
+	return exist,noexist
 def index(request):
 	if not isAuth(request,'nocops'):
 		return HttpResponseRedirect('/noc/login/')
@@ -199,6 +222,8 @@ def filterDepartmentName(team):
 		result = 'DB' 
 	if 'PSTN' in team:
 		result = 'PSTN'
+	if 'Sustain' in team:
+		result = 'Sustain'
 	
 	return result
 '''format the query from database; list is db query set'''

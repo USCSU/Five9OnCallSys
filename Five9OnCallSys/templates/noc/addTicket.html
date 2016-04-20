@@ -1,5 +1,4 @@
 {%extends "base.html"%}
-{% load customfilter %}
 {%block content%}
  
     <div class="container-fluid">
@@ -56,11 +55,16 @@
                   <div class="col-xs-4">
                     <label>SME</label>
                     <div class = "checkbox">
-                    <label><input type="checkbox" name="depart"  id ="select_all1" /> All</label>
+                    <label><input type="checkbox" name="depart1"  id ="select_all1" /> All</label>
                     </div>
                     {%for item in listOfDepartments%}
                     <div class="checkbox">
                       <label><input type="checkbox" name="depart" value={{item.name }} class="oncall" /> {{item.name}}</label>
+                    </div>
+                    {%endfor%}
+                    {%for item in departNoExist%}
+                    <div class="checkbox">
+                      <label class ="text-danger"><input type="checkbox" name="depart" value={{item.name }} class="oncall error_indicator" disabled="disabled"/> {{item.name}}</label>
                     </div>
                     {%endfor%}
                     
@@ -70,13 +74,19 @@
                   <div class="col-xs-4">
                     <label>Manager</label>
                     <div class = "checkbox">
-                    <label><input type="checkbox" name="depart"  id ="select_all2" /> All</label>
+                    <label><input type="checkbox" name="depart2"  id ="select_all2" /> All</label>
                     </div>
                     {%for item in listOfDepartments%}
                     <div class="checkbox" >
                       <label><input type="checkbox" name="escalate" value={{item.name}}  class="escalate" /> {{item.name}}</label>
                     </div>
                     {%endfor%}
+                     {%for item in departNoExist%}
+                    <div class="checkbox" >
+                      <label class = "text-danger"><input type="checkbox" name="escalate" value={{item.name}}  class="escalate error_indicator" disabled="disabled"/> {{item.name}}</label>
+                    </div>
+                    {%endfor%}
+
                     
                     <span id = "error_escalate" class=" text-info"></span>
                   </div>
@@ -84,18 +94,24 @@
                    <div class="col-xs-4">
                     <label>Management</label>
                     <div class = "checkbox">
-                    <label><input type="checkbox" name="depart"  id ="select_all3" /> All</label>
+                    <label><input type="checkbox" name="depart3"  id ="select_all3" /> All</label>
                     </div>
                     {%for item in listOfSuperDepartments%}
                     <div class="checkbox" >
-                      <label><input type="checkbox" name="superescalate" value={{item.name}}  class="management" checked/> {{item.name}}</label>
+                      <label><input type="checkbox" name="superescalate" value={{item.name}}  class="management" /> {{item.name}}</label>
+                    </div>
+                    {%endfor%}
+                     {%for item in superdepartNoExist%}
+                    <div class="checkbox" >
+                      <label class = "text-danger"><input type="checkbox" name="superescalate" value={{item.name}}  class="management error_indicator" disabled="disabled"/> {{item.name}}</label>
                     </div>
                     {%endfor%}
                     
                      
-                    <span id = "error_escalate" class=" text-info"></span>
                   </div>
                 </div>
+                      <h6><span class="label label-danger "  >_</span> <span class="text-danger">No_Employee</span> <span style ="padding-left:20px"> </span>  
+                         <span class="label label-default ">_</span> <span class="text-default">Scheduled</span></h6>
               </div>
               <!-- <button type="submit" class="btn btn-primary" id = "submit" data-toggle="modal" data-target="#basicModal">Submit</button> -->
               <a href="#" class="confirm-delete btn btn-primary" id = "submit" role="button" data-toggle="modal" data-target="#basicModal">Submit</a>
@@ -175,7 +191,7 @@
           var bridge = true;
           var subject = true;
                $('#submit').addClass('disabled');
-               $('#error_msg').html("<p >Outrage# can't be empty</p>");
+               $('#error_msg').html("Field can't be empty");
                $('#error_subject_info').html("<p >size is limited to 25 characters</p>");
                // $('#error_bridge').html("<p >Bridge# can't be empty</p>");
                // $('#error_oncall').html("<p> choose on_call and/or Escalated team");
@@ -207,7 +223,7 @@
                 {   
                   var content = $.trim($(this).val());  
                         if( ! content) {                      //if it is blank. 
-                          $('#error_msg').html("<p >Outrage# can't be empty</p>");
+                          $('#error_msg').html("Field can't be empty");
                           $('#submit').addClass('disabled');
                           ticket = false;
                         } 
@@ -300,5 +316,10 @@
                       });
                     }
                   });
+                // if($('.error_indicator').html()=='')
+                // {
+                //    document.getElementById('error_span').innerHTML="No1 Employee";
+                // }
+                
           </script>
           {%endblock%} 
