@@ -16,8 +16,8 @@ def getSessionTeamInfo(request):
 	username = None
 	if request.user.is_authenticated():
 		username = request.user.username
-	depart = department.objects.filter(employee__email=username)[0]
-	return depart.name
+	depart = department.objects.filter(employee__email=username)
+	return depart
 
 def logSave(name,person,start,end):
 	managerObj = employee.objects.filter(department__name = name)& employee.objects.filter(manager=True)
@@ -55,7 +55,11 @@ def logformat(opLog):
 def index(request,name):
 	if not isAuth(request,'managerops'):
 		return HttpResponseRedirect('/manager/login/')
-	currentTeam = getSessionTeamInfo(request)
+	team = getSessionTeamInfo(request)
+	if not team:
+		return render(request,'registration/noactive.html')
+	
+	currentTeam = team[0].name
 	if name != currentTeam:
 		return HttpResponseRedirect(reverse('managerindex', args=[currentTeam]))
 
@@ -71,7 +75,7 @@ def index(request,name):
 		#update log file 
 		logSave(name,employeelist,start,end)
 		
-		return HttpResponseRedirect(reverse('managerindex', args=[getSessionTeamInfo(request)]))
+		return HttpResponseRedirect(reverse('managerindex', args=[currentTeam]))
 
 	else:#get method
 		emp = employee.objects.filter(department__name =name)
@@ -83,7 +87,11 @@ def addSchedule(request,team):
 	#avoid cross visit
 	if not isAuth(request,'managerops'):
 		return HttpResponseRedirect('/manager/login/')
-	currentTeam = getSessionTeamInfo(request)
+	temp = getSessionTeamInfo(request)
+	if not temp:
+		return render(request,'registration/noactive.html')
+	
+	currentTeam = temp[0].name
 	if team != currentTeam:
 		return HttpResponseRedirect(reverse('managerindex', args=[currentTeam]))
 	if request.method == 'POST':
@@ -106,7 +114,11 @@ def addSchedule(request,team):
 def updateSchedule(request,team):
 	if not isAuth(request,'managerops'):
 		return HttpResponseRedirect('/manager/login/')
-	currentTeam = getSessionTeamInfo(request)
+	temp = getSessionTeamInfo(request)
+	if not temp:
+		return render(request,'registration/noactive.html')
+	
+	currentTeam = temp[0].name
 	if team != currentTeam:
 		return HttpResponseRedirect(reverse('managerindex', args=[currentTeam]))
 	if request.method=='POST':
@@ -125,7 +137,12 @@ def updateSchedule(request,team):
 def deleteSchedule(request,team):
 	if not isAuth(request,'managerops'):
 		return HttpResponseRedirect('/manager/login/')
-	currentTeam = getSessionTeamInfo(request)
+	 
+	temp = getSessionTeamInfo(request)
+	if not temp:
+		return render(request,'registration/noactive.html')
+	
+	currentTeam = temp[0].name
 	if team != currentTeam:
 		return HttpResponseRedirect(reverse('managerindex', args=[currentTeam]))
 	if request.method=='POST':

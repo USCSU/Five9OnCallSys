@@ -57,5 +57,30 @@ span {
   background-color: #eeeedd;
 }
 .table tbody tr.Sustaining_team {
+  background-color: #80ccff;
+}
+.table tbody tr.Infra_team {
   background-color: #ff704d;
+}
+
+
+
+
+.upload-drop-zone {
+  height: 200px;
+  border-width: 2px;
+  margin-bottom: 20px;
+}
+
+/* skin.css Style*/
+.upload-drop-zone {
+  color: #ccc;
+  border-style: dashed;
+  border-color: #ccc;
+  line-height: 200px;
+  text-align: center
+}
+.upload-drop-zone.drop {
+  color: #222;
+  border-color: #222;
 }

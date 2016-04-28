@@ -11,8 +11,8 @@ def getSessionTeamInfo(request):
     username = None
     if request.user.is_authenticated():
         username = request.user.username
-    depart = department.objects.filter(employee__email=username)[0]
-    return depart.name
+    depart = department.objects.filter(employee__email=username)
+    return depart
 
 def isAuth(request,group):
     return request.user.groups.filter(name= group).exists();
@@ -33,7 +33,11 @@ def index(request):
                     return HttpResponseRedirect('/noc')
                 elif request.user.groups.filter(name = 'managerops'):
                     # return HttpResponseRedirect('/manager')
-                    return HttpResponseRedirect(reverse('managerindex', args=[getSessionTeamInfo(request)]))
+                    team = getSessionTeamInfo(request)
+                    if not team:
+                        return render(request,'registration/noactive.html')
+                    else:
+                        return HttpResponseRedirect(reverse('managerindex', args=[team[0].name]))
                 else:
                     return render(request,'registration/nogroup.html')
             else:
