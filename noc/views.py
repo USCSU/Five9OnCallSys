@@ -90,8 +90,8 @@ def getManagers(listOfDepartments):
 	managerList = []
 	for item in listOfDepartments:
 		manager = getManager(item)
-		if manager:
-			managerList.append(manager[0].phone)
+		for item in manager:
+			managerList.append(item.phone)
 	return managerList
 '''
 This funciton is mainly to retrieve employees who will take the duty for one department
@@ -104,8 +104,8 @@ def getOnCallEmployee(depart_name):
 	print ondutylist
 	if not ondutylist: # if no employee is on duty, the ticket will be sent to corresponding manager
 		manager = employee.objects.filter(department__name=depart_name).filter(manager = True)
-		if manager:
-			emaillist.append(manager[0].phone)
+		for item in manager:
+			emaillist.append(item.phone)
 	else:
 		for item in ondutylist:
 			if item:
@@ -144,22 +144,25 @@ def addTicket(request):
 			ticket = form.cleaned_data['Ticket']#list(oncallList)
 			subject = request.POST.get('subject')
 
-			 
+			oncallFlag = False
+			escalateFlag= False
 			#email sent
 			if bool(oncallList):
 				# send_email("chris.sufive9@gmail.com", "Five9ossqa",list(oncallList), subject," Outrage bridge#:"+ bridgeNumber+"\nOutage/Service Alert #: "+ticket) 
-				send_email("NocTextAlert@five9.com", "Five9321!",'NocTextAlert@five9.com',list(oncallList), subject," Outrage bridge#:"+ bridgeNumber+"\nOutage/Service Alert #: "+ticket) 
+				send_email("NocTextAlert@five9.com", "Five9321!",'NocTextAlert@five9.com',list(oncallList), subject," Outrage bridge#:"+ bridgeNumber+"\nOutage/Service Alert #: "+ticket+" \n-Alert sent by "+request.user.username) 
+				oncallFlag = True
 			if bool(escalateList):	
-				send_email("NocTextAlert@five9.com", "Five9321!",'NocTextAlert@five9.com',list(escalateList), subject," Outrage bridge#:"+ bridgeNumber+"\nOutage/Service Alert #: "+ticket)
+				send_email("NocTextAlert@five9.com", "Five9321!",'NocTextAlert@five9.com',list(escalateList), subject," Outrage bridge#:"+ bridgeNumber+"\nOutage/Service Alert #: "+ticket+" \n-Alert sent by "+request.user.username)
+				escalateFlag = True
 			
 			if bool(superescalateList):
-				send_email("NocTextAlert@five9.com", "Five9321!",'NocTextAlert@five9.com',list(superescalateList), subject," Outrage bridge#:"+ bridgeNumber+"\nOutage/Service Alert #: "+ticket)
+				send_email("NocTextAlert@five9.com", "Five9321!",'NocTextAlert@five9.com',list(superescalateList), subject," Outrage bridge#:"+ bridgeNumber+"\nOutage/Service Alert #: "+ticket+" \n-Alert sent by "+request.user.username)
 			#update log of Noc operation
 			 
-			if bool(oncallList):
+			if bool(oncallList) and oncallFlag:
 				record = log(datetime = getcurrentPST(), ticketnumber = ticket, oncallUser = list(oncallList) , departments = json.dumps(departlist),escalate = False, bridge = bridgeNumber, management = json.dumps(superescalate), nocEmp = request.user)
 				record.save()
-			if bool(escalateList):	
+			if bool(escalateList) and escalateFlag:	
 				record = log(datetime = getcurrentPST(), ticketnumber = ticket, oncallUser = list(escalateList) , departments = json.dumps(escalate),escalate = True, bridge = bridgeNumber, management = json.dumps(superescalate),nocEmp = request.user)
 				record.save()
 			return HttpResponseRedirect('/noc');
@@ -197,7 +200,7 @@ def index(request):
 		return HttpResponseRedirect('/noc/login/')
 	bridgeSet = bridge.objects.all()
 	if bridgeSet:
-		oldNumber = bridge.objects.all()[:1][0].number	
+		oldNumber = bridgeSet[:1][0].number	
 	else:
 		oldNumber =''
 
@@ -289,7 +292,7 @@ def setBridge(request):
 			item.save()
 		# orelse, update 
 		else:
-			oldNumber = bridge.objects.all()[:1][0].number
+			oldNumber = bridgeSet[:1][0].number
 			bridge.objects.filter(number=oldNumber).update(number = bridgeNum)
 		return HttpResponseRedirect(reverse('nocindex'))
 	else:#get method
