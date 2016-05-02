@@ -25,6 +25,7 @@ urlpatterns = [
 	url(r'^noc/setBridgeTicket$', noc.setBridgeTicket,name ='setbridgeticket'),
 
     url(r'^logout/$','django.contrib.auth.views.logout',{'next_page': '/'}),
+    url(r'^change_password/$',login.passwordChange,name = 'passwordchange'),
     
     url(r'test/$',login.test,name='test'),
     url(r'checkbox/$',login.checkbox,name='checkbox'),

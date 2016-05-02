@@ -1,0 +1,85 @@
+{%extends "base.html"%}
+{%block content%}
+<BR><BR><br><br><br>
+ <title>Change Password</title>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6 col-md-4 col-md-offset-4">
+            <h2 class="text-center login-title">Change Password</h2>
+             
+               
+                <form  method = "post" action ="{% url 'passwordchange' %}">
+                <ul class = "errorMessages"></ul>
+                {% csrf_token %}
+                
+                <input type="text " class="form-control" style = "float:left" placeholder="Username" name = 'username' id ='username' required autofocus/>
+                <label class = " text-danger" id = "username_error"></label>
+
+                <input type="password" class="form-control" placeholder="Old Password" name = 'oldpass' id = 'oldpass' required ></input>
+                <label class = "text-danger" id = "oldpass_error"></label>
+
+                <input type="password" class="form-control " placeholder="New Password" name = 'newpass' id='newpass' required></input>
+                <label class = " text-danger" id = "newpass_error"></label>
+
+                <input type="password" class="form-control " placeholder="Retype New Password" name = 'newpass2' id='newpass2' onChange='checkPasswordMatch();' required></input>
+                <label class = " text-danger" id = "newpass2_error"></label><br><br>
+                 
+                <button type="submit" id = 'submit' class="btn btn-md btn-primary">Submit</button>
+                <a href="{%url 'homepage' %}"   id = "back" class="btn btn-md btn-success"  >Back</a>
+                </div>
+          
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+     function validateEmail(email) {
+        var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+        return emailReg.test(email );
+      }
+      var email = false, samePass = false;
+     $('#username').blur(function()          //whenever you click off an input element
+     {   
+                        var content = $.trim($(this).val());  
+                        if(!validateEmail(content)) {                     
+                          $('#username_error').html("Invalid Email address");
+                          email = false;
+                          $('#submit').addClass('disabled');
+                        } else {
+                          $('#username_error').html("");
+                          email = true;
+                        }
+                       if(email&&samePass){
+                          $('#submit').removeClass('disabled');
+                        }
+                        
+     });
+
+    function checkPasswordMatch() {
+        var password = $("#newpass").val();
+        var confirmPassword = $("#newpass2").val();
+
+        if (password != confirmPassword){
+            $("#newpass2_error").html("Passwords do not match");
+            samePass = false;
+            $('#submit').addClass('disabled');
+          }
+        else{
+            $("#newpass2_error").html("");
+            samePass = true;
+            $('#submit').removeClass('disabled');
+        }
+        if(email&&samePass){
+          $('#submit').removeClass('disabled');
+        }
+    }
+
+  $(document).ready(function () {
+   $("#newpass2").keyup(checkPasswordMatch);
+
+  });
+
+         
+</script>
+
+{%endblock%} 

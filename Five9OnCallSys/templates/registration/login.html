@@ -1,7 +1,7 @@
 {%extends "base.html"%}
 {%block content%}
 <BR><BR>
- <title>Sign in Beijing System</title>
+ <title>Sign in Paging System</title>
 <div class="container">
     <div class="row">
         <div class="col-sm-6 col-md-4 col-md-offset-4">
@@ -15,8 +15,8 @@
                 <input type="password" class="form-control" placeholder="Password" name = 'password' required>
                 <button class="btn btn-lg btn-primary btn-block" type="submit">
                     Sign in</button>
-                 <label class="checkbox pull-left"><input type="checkbox" name = "remember" value="true"/>Remember me</label>
-                <a href="#" class="pull-right need-help">Need help? </a><span class="clearfix"></span>
+                 <label class="checkbox pull-left"><input type="checkbox" name = "remember" value="true"/>Remember me</label><br>
+                <a href="{%url 'passwordchange'%}" class="pull-right need-help">Change Password? </a><span class="clearfix"></span>
                 </form>
             </div>
           

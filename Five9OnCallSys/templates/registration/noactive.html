@@ -1,2 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<br><br><br><br> 
 <p>Your account is not active. Please contant your administrator.</p>
-<a href = "{%url 'homepage'  %}"> Back to home page</a>
+<a href="{%url 'homepage' %}"   id = "back" class="btn btn-md btn-success"  >Back to HomePage</a>
+
+{% endblock %}
+
+
+
+

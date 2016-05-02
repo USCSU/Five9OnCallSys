@@ -6,7 +6,7 @@ from django.contrib.auth.views import logout
 from .forms import LoginForm
 from django.core.urlresolvers import reverse
 from manager.models import department
- 
+from django.contrib.auth.models import User
 def getSessionTeamInfo(request):
     username = None
     if request.user.is_authenticated():
@@ -54,6 +54,24 @@ def index(request):
 def logout(request):
     logout(request, *args, **kwargs)
     HttpResponseRedirect("logout")
+
+def passwordChange(request):
+    if request.method == 'POST':
+        usernames = request.POST.get('username')
+        oldPassword = request.POST.get('oldpass')
+        newPassword = request.POST.get('newpass')
+        try:
+            user = User.objects.get(username=usernames)
+        except Exception:
+            return render(request,'registration/WrongUserOrPassword.html')
+        if not user.check_password(oldPassword):
+            return render(request,'registration/WrongUserOrPassword.html')  
+        else:
+            user.set_password(newPassword)
+            user.save();
+            return render(request,'registration/SuccessPasswdChange.html')  
+    else:
+        return render(request,'registration/pwd_change.html');
 def test(request):
     return render(request,'registration/test.html')
 def checkbox(request):
