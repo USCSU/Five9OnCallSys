@@ -124,6 +124,8 @@ def getOnCallEmployees(listOfDepartments):
 Index page of noc module
 '''
 def addTicket(request):
+	if not isAuth(request,'nocops'):
+		return HttpResponseRedirect('/')
 	if request.method == 'POST':	 
 		form = NocOpsForm(request.POST)
 		escalate = [str(x) for x in request.POST.getlist('escalate')]
@@ -197,7 +199,7 @@ def getNoEmpList(listOfDepartment):
 	return exist,noexist
 def index(request):
 	if not isAuth(request,'nocops'):
-		return HttpResponseRedirect('/noc/login/')
+		return HttpResponseRedirect('/')
 	bridgeSet = bridge.objects.all()
 	if bridgeSet:
 		oldNumber = bridgeSet[:1][0].number	
@@ -208,7 +210,7 @@ def index(request):
 	return render(request,'noc/index.html',{ 'log':logs,'number':oldNumber})
 
 def filterDepartmentName(team):
-	result = ""
+	result = team
 	if 'IT' in team:
 		result = 'IT' 
 	if 'Info' in team:
@@ -247,7 +249,7 @@ def dutylistFormat():
 ''' check SME view page'''
 def checkSME(request):
 	if not isAuth(request,'nocops'):
-		return HttpResponseRedirect('/noc/login/')
+		return HttpResponseRedirect('/')
 	return render(request,'noc/checkSME.html',{'logs':json.dumps(dutylistFormat(),default = json_serial)});
 
 def getOnDutyByDeparment(nameOfDepart,next24,current):
@@ -268,7 +270,7 @@ def getOnDutyByDeparment(nameOfDepart,next24,current):
 '''check SME table view'''
 def checkSMETable(request):
 	if not isAuth(request,'nocops'):
-		return HttpResponseRedirect('/noc/login/')
+		return HttpResponseRedirect('/')
 	next24 = getNext24PST() # next 24 hour end time
 	current = getcurrentPST()
 	departlist = [item['name'] for item in department.objects.values('name')]
