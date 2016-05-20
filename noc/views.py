@@ -213,8 +213,8 @@ def filterDepartmentName(team):
 	result = team
 	if 'IT' in team:
 		result = 'IT' 
-	if 'Info' in team:
-		result = 'INFO' 
+	if 'Security' in team:
+		result = 'Security' 
 	if 'Center' in team:
 		result = 'DCNTER' 
 	if 'Sys'  in team:
@@ -229,7 +229,10 @@ def filterDepartmentName(team):
 		result = 'PSTN'
 	if 'Sustain' in team:
 		result = 'Sustain'
-	
+	if 'Infrastructure_team' in team:
+		result = 'Infra'
+	if 'NICE' in team:
+		result = 'NICE'
 	return result
 '''format the query from database; list is db query set'''
 def dutylistFormat():

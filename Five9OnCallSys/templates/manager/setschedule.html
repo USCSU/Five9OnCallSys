@@ -12,8 +12,9 @@
             <br>
             <br>
             <li><a href="#"  class = "confirm-delete" id = "new" role="button"  data-toggle="modal" data-target="#addModal">Add Schedule</a></li>
+           <!--  <li><a href="#"  class = "confirm-delete" id = "new" role="button"  data-toggle="modal" data-target="#uploadModal">Upload Schedule</a></li>
+            <li><a href="#"  class = "confirm-delete" id = "new" role="button"  data-toggle="modal" data-target="#deleteAllModal">Delete All Schedules</a></li> -->
             <li><a href="{%url 'managerindex' team%}">Back</a></li>
-            <li><a href="#">Bug Report</a></li>
             
           </ul>
         </div>
@@ -189,6 +190,61 @@
                       </div>
               </div>
      </div>
+
+     <div class="modal fade" id="deleteAllModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+              <div class="modal-dialog modal-sm">
+              <!-- modal content -->
+                      <div class="modal-content">
+                          <form action = "{%url 'deleteallschedule' team%}" method = "post"> <!-- send to Django view  -->
+                              <div class="modal-body">
+                                    <h4 class="modal-title" id="myModalLabel">Delete all schedules?</h4>
+                                     
+                                    {%csrf_token%}
+                                    
+                              </div>
+                              <div class="modal-footer">
+                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                 <button type="submit" class="btn btn-primary">Submit</button></form>
+                              </div>
+                          </form>
+                      </div>
+              </div>
+     </div>
+
+<!-- Modal for upload-->
+    <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+              <div class="modal-dialog modal-md">
+              <!-- modal content -->
+                      <div class="modal-content">
+                      <!-- need to change -->
+                       <div class="modal-header">
+                                <h4 class="modal-title" id="myModalLabel">Upload Schedule</h4>
+                      </div>
+                          <form action = "{%url 'uploadschedule' team%}" method = "post" enctype="multipart/form-data"> <!-- send to Django view  -->
+                              <div class="modal-body">
+                                    <div class="input-group">
+                                        <span class="input-group-btn">
+                                            <span class="btn btn-primary btn-file id = 'fileselection' " >
+                                                Browse&hellip; <input type="file" id = 'files' name = 'files' accept='text/csv, application/csv' required />
+                                            </span>
+                                            
+                                        </span>
+                                        <input type="text" class="form-control" id = "filetitle" accept=".csv" required readonly>
+                                    </div>
+                                    <label class = " text-info" id = "upload_info">Only csv format is required</label>
+                                    <label class = " text-danger" id = "upload_error"></label>
+                                    {%csrf_token%}
+                                     
+                                    
+                              </div>
+                              <div class="modal-footer">
+                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                 <button type="submit" class="btn btn-primary" id = "upload">Upload</button></form>
+                              </div>
+                          </form>
+                      </div>
+              </div>
+     </div>
 </div>
 </div>
  <p id = "demo"></p>
@@ -210,7 +266,7 @@
           //   format: "yyyy-mm-dd",
           //   startDate: new Date(),
           // });  
-         
+
         });
         var index;
         $('.update_row').on('click', function (e) {
@@ -265,6 +321,59 @@
             $('#datetimepicker3').data("DateTimePicker").maxDate(e.date);
         });
       });
+
+
+
+      $(document).on('change', '.btn-file :file', function() {
+          var input = $(this),
+              numFiles = input.get(0).files ? input.get(0).files.length : 1,
+              label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+          input.trigger('fileselect', [numFiles, label]);
+        });
+
+      $(document).ready( function() {
+          $('.btn-file :file').on('fileselect', function(event, numFiles, label) {
+              
+              var input = $(this).parents('.input-group').find(':text'),
+                  log = numFiles > 1 ? numFiles + ' files selected' : label;
+              
+              if( input.length ) {
+                  input.val(log);
+              } else {
+                  if( log ) alert(log);
+              }
+              
+          });
+      });
+        // if(document.getElementById("files").value != "") {
+        //    // you have a file
+        //    $('#upload_info').html("123");
+        //    $('#upload').removeClass("disabled");
+        // }
+
+        // if(document.getElementById("files").value == "") {
+        //   $('#upload_info').html("000");
+        //    $('#upload').addClass("disabled");
+        // }
+
+        $(document).ready(function() {
+            $('#upload').bind("click",function() 
+            { 
+                var val = $('#files').val(); 
+                if(val=='') 
+                { 
+                    // alert("empty input file"); 
+                    $('#upload_error').html("No file uploaded");
+                    $('#upload_info').html("");
+                    return false; 
+                } 
+
+
+            }); 
+        });
+      
+
+      
     </script>
       <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
       <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>

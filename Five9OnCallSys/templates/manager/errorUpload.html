@@ -1,0 +1,24 @@
+{%extends "base.html"%}
+{%block content%}
+<br><br><br><br>
+<br>
+<div class = 'col-md-8 col-md-offset-1'>
+<h4 >You uploaded file can't be read. Please check the following possible errors and try again.</h4>
+
+<div class = "alert alert-success">
+	No such employees exsited. Please check Lower cases, Upper cases or typos. 
+</div>
+
+<div class = "alert alert-warning">
+	Wrong format. Only 3 columns are allowed.  
+</div>
+<div class = "alert alert-danger">
+	Datetime error. Date time should be later than current time. 
+</div>
+<div class = "alert alert-info">
+	Unregonized format for datetime.
+</div>
+
+ <a href="{%url 'managerschdule' team %}"   id = "back" class="btn btn-md btn-success"  >Back to HomePage</a>
+</div>
+{%endblock%}

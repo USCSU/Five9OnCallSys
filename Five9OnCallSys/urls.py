@@ -13,7 +13,9 @@ urlpatterns = [
 	url(r'^team/(?P<name>\w+)/$', manager.index,name ='managerindex'),
 
 	url(r'^team/(?P<team>\w+)/delete/$', manager.deleteSchedule,name ='deleteschedule'),
+	url(r'^team/(?P<team>\w+)/deleteAllSchedule/$', manager.deleteAllSchedule,name ='deleteallschedule'),
 	url(r'^team/(?P<team>\w+)/update/$', manager.updateSchedule,name ='updateschedule'),
+	url(r'^team/(?P<team>\w+)/Upload_Schedule/$', manager.uploadSchedule,name ='uploadschedule'),
 	
 	url(r'^noc/$', noc.index,name ='nocindex'),
 

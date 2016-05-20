@@ -31,7 +31,7 @@ def index(request):
                 login(request,user)
                 if request.user.groups.filter(name = 'nocops'):
                     return HttpResponseRedirect('/noc')
-                elif request.user.groups.filter(name = 'managerops'):
+                elif request.user.groups.filter(name = 'managerops') or request.user.groups.filter(name='SME'):
                     # return HttpResponseRedirect('/manager')
                     team = getSessionTeamInfo(request)
                     if not team:

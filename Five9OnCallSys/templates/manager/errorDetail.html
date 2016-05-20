@@ -1,0 +1,56 @@
+{%extends "base.html"%}
+{%block content%}
+<br><br><br><br><br>
+<div class = 'col-md-8 col-md-offset-1'>
+<h4 >You schedules were NOT inserted due to following possible errors</h4>
+
+<div class = "alert alert-success">
+	No such employees exsited. Please check Lower cases, Upper cases and typos. 
+ </div>
+ <div>
+ <table class ='table table-striped table-condensed'>
+
+   {%for row in wrongName%}
+   <tr>
+   	<td>{{row|slice:'1'|join:""}} </td>
+   	<td>{{row|slice:'1:2'|join:""}}</td>
+   	<td>{{row|slice:'2:3'|join:""}}</td>
+   	</tr>
+   {%endfor%}
+    </table>
+    </div>
+
+<div class = "alert alert-warning">
+	Wrong format. 3 columns only are allowed. Or Date time format of input is unrecognized.
+ </div>
+ <div>
+	<table class ='table table-striped table-condensed'>
+	
+   {%for row in wrongFormat%}
+    <tr>
+   	<td>{{row|slice:'1'|join:""}} </td>
+   	<td>{{row|slice:'1:2'|join:""}}</td>
+   	<td>{{row|slice:'2:3'|join:""}}</td>
+   	</tr>
+   {%endfor%}
+    </table>
+ </div>
+<div class = "alert alert-danger">
+	Datetime error. Date time should be later than current time. And end time is no earlier than start time.
+</div>
+<div>
+<table class ='table table-striped table-condensed'>
+	
+   {%for row in wrongDate%}
+   <tr>
+   	<td>{{row|slice:'1'|join:""}} </td>
+   	<td>{{row|slice:'1:2'|join:""}}</td>
+   	<td>{{row|slice:'2:3'|join:""}}</td>
+   	</tr>
+  
+   {%endfor%}
+    </table>
+</div><br><br><br>
+ <a href="{%url 'managerschdule' team %}"   id = "back" class="btn btn-md btn-success"  >Back to HomePage</a>
+
+{%endblock%}
