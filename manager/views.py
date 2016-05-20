@@ -34,7 +34,7 @@ def logSave(name,person,start,end):
 def onDutySave(departName,start,end,id):
 	depart =  department.objects.get(name = departName)
 	emp= employee.objects.get(employeeid =id)
- 	duty = onDuty(department = depart,startDate = datetime.strptime(start, "%Y/%m/%d %H:%M %p"),endDate= datetime.strptime(end, "%Y/%m/%d %H:%M %p"), employee= emp )
+ 	duty = onDuty(department = depart,startDate = datetime.strptime(start, "%Y/%m/%d %I:%M %p"),endDate= datetime.strptime(end, "%Y/%m/%d %I:%M %p"), employee= emp )
  	duty.save()
 
  
@@ -105,7 +105,6 @@ def addSchedule(request,team):
 		start= request.POST.get('startdate')
 		end =request.POST.get('enddate')
 		idlist = request.POST.get('user')
-		 
 		#onduty log file
 		onDutySave(team, start,end,idlist)
 		
