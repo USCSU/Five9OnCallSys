@@ -190,7 +190,7 @@
           var subject = true;
                $('#submit').addClass('disabled');
                $('#error_msg').html("Field can't be empty");
-               $('#error_subject_info').html("<p >size is limited to 25 characters</p>");
+               $('#error_subject_info').html("<p >size is limited to 75 characters</p>");
                // $('#error_bridge').html("<p >Bridge# can't be empty</p>");
                // $('#error_oncall').html("<p> choose on_call and/or Escalated team");
                // $('#error_escalate').html("<p> Please choose Escalate team");
@@ -238,14 +238,14 @@
                 $('#subject').blur(function()          //whenever you click off an input element
                 {   
                   var content = $.trim($(this).val()); 
-                        if(  content.length>25) {                      //if it is blank. 
+                        if(  content.length>75) {                      //if it is blank. 
                           $('#error_subject_info').html("");
-                          $('#error_subject').html("<p>size is limited to 25 characters</p>");
+                          $('#error_subject').html("<p>size is limited to 75 characters</p>");
                           $('#submit').addClass('disabled');
                           subject = false;
                         } 
                         else{
-                          $('#error_subject_info').html("<p>size is limited to 25 characters</p>");
+                          $('#error_subject_info').html("<p>size is limited to 75 characters</p>");
                           $('#error_subject').html("");
                           subject = true;
                         }

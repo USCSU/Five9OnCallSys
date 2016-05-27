@@ -137,28 +137,50 @@ def addTicket(request):
 			escalateList =  Set(getManagers(escalate))
 			superescalateList =  Set(getManagers(superescalate))
 			oncallList = Set(getOnCallEmployees(departlist))
+
 			bridgeNumber = request.POST.get('bridge')
 			 
 			print escalateList
 			print superescalateList
 			print oncallList
 
+			# receiverList = []
+			# receiverList.extend(escalateList)
+			# receiverList.extend(oncallList)
+			# receiverList.extend(superescalateList)
+
 			ticket = form.cleaned_data['Ticket']#list(oncallList)
 			subject = request.POST.get('subject')
+			# data base flag to save on the log
+			# dbFlag = False
+			# extraList = 
+			# if bool(escalateList) or bool(superescalateList) or bool(oncallList):
+			# 	extraList = ['chris.su@five9.com','Dhaval.vora@five9.com']
+			# 	# ,'Dhaval.Vora@five9.com','Katherine.McCall@five9.com']
+			# 	receiverList.extend(extraList)
+			# 	dbFlag = True
+			# 	send_email("NocTextAlert@five9.com", "Five9321!",'NocTextAlert@five9.com',receiverList, subject," Outrage bridge#:"+ bridgeNumber+"\nOutage/Service Alert #: "+ticket+" \n-Alert sent by "+request.user.username) 	
 
 			oncallFlag = False
 			escalateFlag= False
+			extraList = ['chris.su@five9.com','Dhaval.vora@five9.com','Katherine.McCall@five9.com']
 			#email sent
 			if bool(oncallList):
+				oncallExtraList=list(oncallList)
+				oncallExtraList.extend(extraList)
 				# send_email("chris.sufive9@gmail.com", "Five9ossqa",list(oncallList), subject," Outrage bridge#:"+ bridgeNumber+"\nOutage/Service Alert #: "+ticket) 
-				send_email("NocTextAlert@five9.com", "Five9321!",'NocTextAlert@five9.com',list(oncallList), subject," Outrage bridge#:"+ bridgeNumber+"\nOutage/Service Alert #: "+ticket+" \n-Alert sent by "+request.user.username) 
+				send_email("NocTextAlert@five9.com", "Five9321!",'NocTextAlert@five9.com',oncallExtraList, subject," Outrage bridge#:"+ bridgeNumber+"\nOutage/Service Alert #: "+ticket+" \n-Alert sent by "+request.user.username) 
 				oncallFlag = True
 			if bool(escalateList):	
-				send_email("NocTextAlert@five9.com", "Five9321!",'NocTextAlert@five9.com',list(escalateList), subject," Outrage bridge#:"+ bridgeNumber+"\nOutage/Service Alert #: "+ticket+" \n-Alert sent by "+request.user.username)
+				escalateExtraList = list(escalateList)
+				escalateExtraList.extend(extraList)
+				send_email("NocTextAlert@five9.com", "Five9321!",'NocTextAlert@five9.com',escalateExtraList, subject," Outrage bridge#:"+ bridgeNumber+"\nOutage/Service Alert #: "+ticket+" \n-Alert sent by "+request.user.username)
 				escalateFlag = True
 			
 			if bool(superescalateList):
-				send_email("NocTextAlert@five9.com", "Five9321!",'NocTextAlert@five9.com',list(superescalateList), subject," Outrage bridge#:"+ bridgeNumber+"\nOutage/Service Alert #: "+ticket+" \n-Alert sent by "+request.user.username)
+				superExtraList = list(superescalateList)
+				superExtraList.extend(extraList)
+				send_email("NocTextAlert@five9.com", "Five9321!",'NocTextAlert@five9.com',superExtraList, subject," Outrage bridge#:"+ bridgeNumber+"\nOutage/Service Alert #: "+ticket+" \n-Alert sent by "+request.user.username)
 			#update log of Noc operation
 			 
 			if bool(oncallList) and oncallFlag:

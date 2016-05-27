@@ -20,7 +20,7 @@ def isAuth(request,group):
 def index(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
-        username = request.POST.get('username')
+        username = request.POST.get('username').strip()
         password = request.POST.get('password')
         user = authenticate(username = username,password = password)
         if request.POST.has_key('remember'):
