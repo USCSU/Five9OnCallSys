@@ -80,10 +80,12 @@ def send_email(user, pwd, sender,recipient, subject, body):
 	    print 'Failed to send email: ' + str(e)
 
 '''
-this function is mainly to retrieve manager's name  with input from form submission
+this function is mainly to retrieve manager's name  with input from form submission, if no manager assigned, broadcast
 '''
 def getManager(depart_name): 
 	managerItem = (employee.objects.filter(department__name = depart_name).filter(manager='true'))
+	if not bool(managerItem): # if no manager assigned, then broadcast list will be added.
+		managerItem = (employee.objects.filter(department__name = depart_name))
 	return managerItem
 
 def getManagers(listOfDepartments):
@@ -102,8 +104,8 @@ def getOnCallEmployee(depart_name):
 	ondutylist = onDuty.objects.filter(department__name =depart_name).filter(startDate__lte= currentTime).filter(endDate__gte=currentTime)
 	print "onduty"
 	print ondutylist
-	if not ondutylist: # if no employee is on duty, the ticket will be sent to corresponding manager
-		manager = employee.objects.filter(department__name=depart_name).filter(manager = True)
+	if not ondutylist: # if no employee is on duty, the ticket will be sent to corresponding manager; if no manager, broadcast to whole team
+		manager = getManager(depart_name)
 		for item in manager:
 			emaillist.append(item.phone)
 	else:
@@ -163,7 +165,7 @@ def addTicket(request):
 
 			oncallFlag = False
 			escalateFlag= False
-			extraList = ['chris.su@five9.com','Dhaval.vora@five9.com','Katherine.McCall@five9.com']
+			extraList = ['chris.su@five9.com','Dhaval.vora@five9.com','5106770136@vtext.com']
 			#email sent
 			if bool(oncallList):
 				oncallExtraList=list(oncallList)
@@ -182,7 +184,7 @@ def addTicket(request):
 				superExtraList.extend(extraList)
 				send_email("NocTextAlert@five9.com", "Five9321!",'NocTextAlert@five9.com',superExtraList, subject," Outrage bridge#:"+ bridgeNumber+"\nOutage/Service Alert #: "+ticket+" \n-Alert sent by "+request.user.username)
 			#update log of Noc operation
-			 
+			''' if escalate flag or oncall flag is set up, then save to log; otherwise, no '''
 			if bool(oncallList) and oncallFlag:
 				record = log(datetime = getcurrentPST(), ticketnumber = ticket, oncallUser = list(oncallList) , departments = json.dumps(departlist),escalate = False, bridge = bridgeNumber, management = json.dumps(superescalate), nocEmp = request.user)
 				record.save()
@@ -238,14 +240,14 @@ def filterDepartmentName(team):
 	if 'Security' in team:
 		result = 'Security' 
 	if 'Center' in team:
-		result = 'DCNTER' 
+		result = 'DC' 
 	if 'Sys'  in team:
 		result = 'SYS' 
 	if 'Network' in team:
 		result = 'Network' 
 	if 'NOC' in team:
 		result = 'NOC' 
-	if 'Data' in team:
+	if 'Database' in team:
 		result = 'DB' 
 	if 'PSTN' in team:
 		result = 'PSTN'
