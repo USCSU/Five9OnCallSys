@@ -27,7 +27,10 @@ def getSessionTeamInfo(request):
 
 def logSave(name,person,start,end):
 	managerObj = employee.objects.filter(department__name = name)& employee.objects.filter(manager=True)
-	managername = managerObj[0].firstName + " " + managerObj[0].lastName
+	if not bool(managerObj):
+		managername = "Empty"
+	else:
+		managername = managerObj[0].firstName + " " + managerObj[0].lastName
 	managerlog = log(department = name,manager = managername, startdate=parser.parse(start).strftime("%Y-%m-%d %H:%M"),enddate= parser.parse(end).strftime("%Y-%m-%d %H:%M"),oncallUser = person,logtime=datetime.now().strftime("%Y-%m-%d  %H:%M:%S"))
 	managerlog.save()
 

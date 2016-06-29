@@ -291,6 +291,12 @@ def getOnDutyByDeparment(nameOfDepart,next24,current):
 		row['enddate'] = item.endDate.strftime("%m/%d %I:%M %p")
 		row['department'] = nameOfDepart
 		row['employee'] =  '%s %s' %(emp.firstName, emp.lastName) 
+		phone = emp.phone.split('@',1)[0]
+		if phone.isdigit():
+			row['phone'] = '%s-%s-%s' %(phone[0:3],phone[3:6],phone[6:])
+		else:
+			row['phone'] = emp.phone
+ 
 		log.append(row)
 	return log
 
