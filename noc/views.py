@@ -6,7 +6,8 @@ from django.http import HttpResponse,HttpResponseRedirect
 from manager.models import department,employee,onDuty
 from noc.forms import NocOpsForm
 from noc.models import log,bridge
-from datetime import datetime
+import datetime
+from datetime import timedelta
 from sets import Set
 from django.contrib.auth.decorators import login_required
 from login.views import isAuth
@@ -18,20 +19,20 @@ from django.core.urlresolvers import reverse
 def json_serial(obj):
     """JSON serializer for objects not serializable by default json code"""
 
-    if isinstance(obj, datetime):
+    if isinstance(obj, datetime.datetime):
         serial = obj.isoformat()
         return serial
     raise TypeError ("Type not serializable")
 
 def getPSTDateTime():
-	return datetime.now(tz=pytz.utc).astimezone(timezone('US/Pacific'))
+	return datetime.datetime.now(tz=pytz.utc).astimezone(timezone('US/Pacific'))
 def getcurrentPST():
 	format = "%Y-%m-%d %H:%M"
 	return getPSTDateTime().strftime(format)
 def getNext24PST():
 	format = "%Y-%m-%d %H:%M"
 	current = getPSTDateTime()
-	next24=current.replace(day = current.day+1)
+	next24=current + datetime.timedelta(days = 1)
 	return next24.strftime(format)
 
 def logFormat():
